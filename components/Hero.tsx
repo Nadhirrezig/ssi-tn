@@ -27,12 +27,6 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative overflow-hidden pt-20">
-      {/* Soft brand wash behind the whole hero */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute right-0 top-0 h-[520px] w-[520px] translate-x-1/3 -translate-y-1/4 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute left-0 top-1/2 h-72 w-72 -translate-x-1/3 rounded-full bg-primary/5 blur-3xl" />
-      </div>
-
       <div className="mx-auto grid max-w-content items-center gap-12 px-6 lg:grid-cols-2 lg:gap-8">
         {/* Copy */}
         <motion.div
@@ -106,37 +100,38 @@ export default function Hero() {
           </motion.dl>
         </motion.div>
 
-        {/* Visual */}
+        {/* Visual — large brand sphere that reaches up under the navbar */}
         <motion.div
           initial={reduce ? false : { opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-          className="relative mx-auto w-full max-w-[520px] py-8 lg:py-0"
+          className="relative mx-auto h-[420px] w-full max-w-[380px] sm:h-[560px] sm:max-w-[460px] lg:-mt-6 lg:h-[680px] lg:max-w-[520px]"
         >
-          {/* Brand disc backdrop — contained, not overflowing */}
-          <div className="absolute inset-x-4 top-6 -z-10 aspect-square rounded-full bg-primary/10" />
-          <div className="absolute -right-3 top-12 -z-10 h-24 w-24 rounded-3xl bg-accentYellow/80" />
-
-          {/* Main image */}
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-soft shadow-float ring-1 ring-black/5">
+          {/* The sphere — clips the cut-out portrait into a circle (overflow hidden) */}
+          <div className="absolute left-1/2 top-0 aspect-square w-[124%] -translate-x-1/2 overflow-hidden rounded-full bg-primary shadow-[0_50px_90px_-40px_rgba(79,91,255,0.65)]">
+            {/* glossy highlight for depth */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_32%_22%,rgba(255,255,255,0.32),transparent_55%)]" />
+            {/* transparent portrait sits inside the sphere; the blue shows through */}
             <Image
               src="/website-content/hero.webp"
-              alt="Équipe SSI accompagnant la digitalisation et la sécurité informatique des entreprises"
+              alt="Collaboratrice SSI souriante travaillant sur son ordinateur portable"
               fill
               priority
-              sizes="(max-width: 1024px) 80vw, 520px"
-              className="object-cover"
+              unoptimized
+              sizes="(max-width: 1024px) 90vw, 640px"
+              className="object-cover object-bottom"
             />
-            {/* subtle gradient for text legibility on the badge */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/15 to-transparent" />
           </div>
+
+          {/* Small accent square */}
+          <div className="absolute right-0 top-[28%] h-16 w-16 rounded-2xl bg-accentYellow shadow-card" />
 
           {/* Floating trust badge */}
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.55 }}
-            className="absolute -bottom-5 -left-4 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card sm:-left-6"
+            className="absolute bottom-4 left-0 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card sm:-left-4"
           >
             <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary-50 text-primary">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
