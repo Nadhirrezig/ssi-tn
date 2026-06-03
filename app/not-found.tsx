@@ -1,43 +1,31 @@
-import type { Metadata } from "next";
-import { Container } from "@/components/ui/Container";
-import { Eyebrow } from "@/components/ui/Eyebrow";
-import { Button } from "@/components/ui/Button";
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 export const metadata: Metadata = {
-  title: "Page introuvable",
-};
+  title: 'Page introuvable',
+}
 
 export default function NotFound() {
   return (
-    <main className="flex-1 flex items-center">
-      <Container className="py-[var(--space-9)]">
-        <Eyebrow>Erreur 404</Eyebrow>
-        <h1
-          className="mt-[var(--space-3)] font-medium text-ink max-w-[18ch]"
-          style={{
-            fontSize: "var(--text-h1)",
-            lineHeight: 1.05,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Page en préparation.
+    <main className="grid min-h-screen place-items-center bg-soft px-6 py-24 text-center">
+      <div className="mx-auto max-w-md">
+        <Logo href="/" />
+        <p className="mt-12 font-heading text-7xl font-bold text-primary">404</p>
+        <h1 className="mt-4 font-heading text-3xl font-bold text-navy">
+          Page introuvable
         </h1>
-        <p
-          className="mt-[var(--space-4)] text-muted prose-width"
-          style={{
-            fontSize: "var(--text-body-lg)",
-            lineHeight: 1.6,
-          }}
-        >
-          Cette section sera bientôt disponible. Le site SSI est en cours de
-          construction — nous publions progressivement.
+        <p className="mt-4 text-lg leading-relaxed text-slatebody">
+          La page que vous recherchez n’existe pas ou a été déplacée. Revenons à
+          l’essentiel — la digitalisation sécurisée de votre entreprise.
         </p>
-        <div className="mt-[var(--space-5)]">
-          <Button href="/" variant="primary">
-            Retour à l&apos;accueil
-          </Button>
-        </div>
-      </Container>
+        <Link
+          href="/"
+          className="mt-8 inline-block rounded-full bg-primary px-8 py-4 font-heading text-base font-bold text-white shadow-float transition hover:bg-primary-700"
+        >
+          Retour à l’accueil
+        </Link>
+      </div>
     </main>
-  );
+  )
 }

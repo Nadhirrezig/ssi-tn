@@ -1,79 +1,97 @@
 import Link from 'next/link'
+import Logo from './Logo'
 
 export default function Footer() {
   return (
     <footer className="border-t border-black/5 bg-white pb-10 pt-20">
       <div className="mx-auto max-w-content px-6">
-        <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
           {/* Brand */}
           <div>
-            <Link href="#home" className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-white">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M13 2 4.5 13.2c-.4.5 0 1.3.6 1.3H11l-1 7.5c-.1.7.8 1.1 1.2.5L19.5 11c.4-.5 0-1.3-.6-1.3H13l1-7.2c.1-.7-.8-1.1-1.2-.5Z" />
-                </svg>
-              </span>
-              <span className="font-heading text-2xl font-bold text-navy">Base</span>
-            </Link>
+            <Logo imgClassName="h-12 w-auto" />
             <p className="mt-6 max-w-xs text-base leading-relaxed text-slatebody">
-              A production-ready Next.js SaaS boilerplate with everything you need to launch your next product.
+              La digitalisation de votre entreprise, avec des solutions sur mesure
+              et sécurisées. Cybersécurité, infrastructure, développement et infogérance.
             </p>
             <div className="mt-6 flex gap-3">
-              <SocialLink aria-label="Twitter" href="#">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M22 5.8a8 8 0 0 1-2.4.7 4 4 0 0 0 1.8-2.2 8 8 0 0 1-2.6 1A4 4 0 0 0 11.5 9 11.3 11.3 0 0 1 3.4 4.8 4 4 0 0 0 4.6 10 4 4 0 0 1 2.8 9.5v.1a4 4 0 0 0 3.2 3.9 4 4 0 0 1-1.8.1 4 4 0 0 0 3.7 2.8A8 8 0 0 1 2 18.1 11.3 11.3 0 0 0 8.1 20c7.3 0 11.3-6 11.3-11.3v-.5A8 8 0 0 0 22 5.8Z" />
-                </svg>
-              </SocialLink>
               <SocialLink aria-label="LinkedIn" href="#">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3zM9 9h3.8v1.7h.1A4.2 4.2 0 0 1 16.6 9c4 0 4.4 2.4 4.4 5.6V21h-4v-5.5c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z" />
                 </svg>
               </SocialLink>
-              <SocialLink aria-label="GitHub" href="#">
+              <SocialLink aria-label="Facebook" href="#">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.4-2.2-.2-4.6-1.1-4.6-5a4 4 0 0 1 1-2.7c-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7a4 4 0 0 1 1 2.7c0 3.9-2.3 4.8-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2Z" />
+                  <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z" />
+                </svg>
+              </SocialLink>
+              <SocialLink aria-label="Email" href="mailto:contact@ssi.tn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="m3 7 9 6 9-6" />
                 </svg>
               </SocialLink>
             </div>
           </div>
 
-          {/* Product */}
+          {/* Services */}
           <div>
-            <h4 className="font-heading text-base font-bold text-navy">Product</h4>
+            <h4 className="font-heading text-base font-bold text-navy">Services</h4>
             <ul className="mt-5 space-y-3 text-base">
-              <li><Link href="#features" className="transition hover:text-primary">Features</Link></li>
-              <li><Link href="#pricing" className="transition hover:text-primary">Pricing</Link></li>
-              <li><Link href="#projects" className="transition hover:text-primary">Showcase</Link></li>
-              <li><Link href="#" className="transition hover:text-primary">Changelog</Link></li>
+              <li><Link href="#services" className="transition hover:text-primary">Cybersécurité</Link></li>
+              <li><Link href="#services" className="transition hover:text-primary">Infrastructure & Réseaux</Link></li>
+              <li><Link href="#services" className="transition hover:text-primary">Développement</Link></li>
+              <li><Link href="#services" className="transition hover:text-primary">Cloud & Infogérance</Link></li>
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Entreprise */}
           <div>
-            <h4 className="font-heading text-base font-bold text-navy">Company</h4>
+            <h4 className="font-heading text-base font-bold text-navy">Entreprise</h4>
             <ul className="mt-5 space-y-3 text-base">
-              <li><Link href="#why" className="transition hover:text-primary">About</Link></li>
-              <li><Link href="#" className="transition hover:text-primary">Blog</Link></li>
-              <li><Link href="#" className="transition hover:text-primary">Careers</Link></li>
-              <li><Link href="#" className="transition hover:text-primary">Contact</Link></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="font-heading text-base font-bold text-navy">Support</h4>
-            <ul className="mt-5 space-y-3 text-base">
+              <li><Link href="#about" className="transition hover:text-primary">À propos</Link></li>
+              <li><Link href="#realisations" className="transition hover:text-primary">Réalisations</Link></li>
+              <li><Link href="#tarifs" className="transition hover:text-primary">Tarifs</Link></li>
               <li><Link href="#faq" className="transition hover:text-primary">FAQ</Link></li>
-              <li><Link href="#" className="transition hover:text-primary">Documentation</Link></li>
-              <li><Link href="#" className="transition hover:text-primary">Privacy Policy</Link></li>
-              <li><Link href="#" className="transition hover:text-primary">Terms</Link></li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-heading text-base font-bold text-navy">Contact</h4>
+            <ul className="mt-5 space-y-3 text-base text-slatebody">
+              <li className="flex items-start gap-3">
+                <svg className="mt-1 shrink-0 text-primary" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                Tunis, Tunisie
+              </li>
+              <li>
+                <a href="tel:+21671000000" className="inline-flex items-center gap-3 transition hover:text-primary">
+                  <svg className="shrink-0 text-primary" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" />
+                  </svg>
+                  +216 71 000 000
+                </a>
+              </li>
+              <li>
+                <a href="mailto:contact@ssi.tn" className="inline-flex items-center gap-3 transition hover:text-primary">
+                  <svg className="shrink-0 text-primary" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m3 7 9 6 9-6" />
+                  </svg>
+                  contact@ssi.tn
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-black/5 pt-8 sm:flex-row">
-          <p className="text-sm text-slatebody">© 2026 Base Template. All rights reserved.</p>
-          <p className="text-sm text-slatebody">Designed for a Next.js + Tailwind build.</p>
+          <p className="text-sm text-slatebody">
+            © 2026 SSI — Sécurité &amp; Solutions Informatiques. Tous droits réservés.
+          </p>
+          <p className="text-sm text-slatebody">Conçu en Tunisie.</p>
         </div>
       </div>
     </footer>

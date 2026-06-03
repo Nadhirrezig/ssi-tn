@@ -1,91 +1,92 @@
-const features = [
+import Reveal from './motion/Reveal'
+
+const services = [
   {
+    title: 'Cybersécurité',
+    body: 'Audits, pare-feu, supervision et réponse aux incidents pour une posture de sécurité maîtrisée et conforme.',
     icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="3" y="12" width="4" height="8" rx="1" />
-        <rect x="10" y="7" width="4" height="13" rx="1" opacity=".55" />
-        <rect x="17" y="3" width="4" height="17" rx="1" />
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+        <path d="m9 12 2 2 4-4" />
       </svg>
     ),
-    title: 'Crafted for Startups',
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.',
   },
   {
+    title: 'Infrastructure & Réseaux',
+    body: 'Conception et administration de réseaux et serveurs robustes, pensés pour la performance et la continuité d’activité.',
     icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-        <path d="m12 2 9 5-9 5-9-5 9-5Z" />
-        <path d="m3 12 9 5 9-5" opacity=".55" />
-        <path d="m3 17 9 5 9-5" opacity=".3" />
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="6" rx="1.5" />
+        <rect x="3" y="14" width="18" height="6" rx="1.5" />
+        <path d="M7 7h.01M7 17h.01" />
       </svg>
     ),
-    title: 'Pre-built Pages',
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.',
   },
   {
+    title: 'Développement sur mesure',
+    body: 'Applications web et logiciels métiers adaptés à vos processus, du cahier des charges à la mise en production.',
     icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
-        <path d="M3 9h18" stroke="white" strokeWidth="1.5" opacity=".6" />
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m8 9-3 3 3 3M16 9l3 3-3 3M13.5 7l-3 10" />
       </svg>
     ),
-    title: 'All Essential Sections',
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.',
   },
   {
+    title: 'Cloud & Infogérance',
+    body: 'Migration, hébergement et gestion cloud sécurisés pour gagner en agilité et en disponibilité au quotidien.',
     icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-        <circle cx="12" cy="13" r="8" />
-        <path d="M12 13l4-4" stroke="white" strokeWidth="1.6" />
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6-1.5A4 4 0 0 0 6 19Z" />
       </svg>
     ),
-    title: 'Speed Optimized',
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.',
   },
   {
+    title: 'Audit & Conseil',
+    body: 'Diagnostic de votre système d’information et feuille de route claire pour aligner technologie et objectifs métiers.',
     icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="3" y="3" width="8" height="8" rx="1.5" />
-        <rect x="13" y="3" width="8" height="5" rx="1.5" opacity=".55" />
-        <rect x="13" y="10" width="8" height="11" rx="1.5" />
-        <rect x="3" y="13" width="8" height="8" rx="1.5" opacity=".55" />
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 3v18h18" />
+        <path d="m7 14 3-3 3 3 5-6" />
       </svg>
     ),
-    title: 'Fully Customizable',
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.',
   },
   {
+    title: 'Support & Maintenance',
+    body: 'Assistance réactive et maintenance proactive pour garder votre informatique disponible, à jour et sécurisée.',
     icon: (
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
-        <path d="M3 9h18" stroke="white" strokeWidth="1.5" opacity=".6" />
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6 6a1.4 1.4 0 0 0 2 2l6-6a4 4 0 0 0 5.4-5.4l-2.5 2.5L11 13l-1-3 2.2-1.2Z" />
       </svg>
     ),
-    title: 'Regular Updates',
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In convallis tortor.',
   },
 ]
 
 export default function Features() {
   return (
-    <section id="features" className="bg-soft py-24">
+    <section id="services" className="bg-soft py-24">
       <div className="mx-auto max-w-content px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-4xl font-bold text-navy sm:text-[44px]">
-            An Amazing Next.js Boilerplate
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="font-heading text-base font-bold text-primary">Nos services</p>
+          <h2 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-[44px]">
+            Des solutions informatiques complètes et sécurisées
           </h2>
           <p className="mt-5 text-lg text-slatebody">
-            With All Essential Integrations — DB, Auth, Payment, Sanity, MDX, and more
+            De l’infrastructure à la cybersécurité, nous couvrons l’ensemble de
+            votre système d’information — avec un seul interlocuteur de confiance.
           </p>
-        </div>
-        <div className="mt-16 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f) => (
-            <div key={f.title} className="group">
-              <div className="grid h-14 w-14 place-items-center rounded-xl text-primary transition group-hover:-translate-y-1">
-                {f.icon}
+        </Reveal>
+
+        <div className="mt-16 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((service, i) => (
+            <Reveal key={service.title} delay={(i % 3) * 0.08}>
+              <div className="group h-full rounded-2xl p-2 transition">
+                <div className="grid h-14 w-14 place-items-center rounded-xl bg-white text-primary shadow-card transition group-hover:-translate-y-1">
+                  {service.icon}
+                </div>
+                <h3 className="mt-6 font-heading text-2xl font-bold text-navy">{service.title}</h3>
+                <p className="mt-3 text-base leading-relaxed text-slatebody">{service.body}</p>
               </div>
-              <h3 className="mt-6 font-heading text-2xl font-bold text-navy">{f.title}</h3>
-              <p className="mt-3 text-base leading-relaxed text-slatebody">{f.body}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
