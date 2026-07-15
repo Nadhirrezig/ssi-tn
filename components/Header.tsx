@@ -2,20 +2,322 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Logo from './Logo'
 
-const navLinks = [
-  { href: '#home', label: 'Accueil' },
-  { href: '#services', label: 'Services' },
-  { href: '#about', label: 'À propos' },
-  { href: '#realisations', label: 'Réalisations' },
-  { href: '#tarifs', label: 'Tarifs' },
+const EASE = [0.22, 1, 0.36, 1] as const
+
+type PanelLink = { label: string; href: string }
+
+type PanelCard = {
+  eyebrow?: string
+  title: string
+  desc: string
+  href: string
+  image?: string
+  imageAlt?: string
+  price?: string
+  period?: string
+  links?: PanelLink[]
+}
+
+type Panel = {
+  cards: PanelCard[]
+  note: string
+  cta: PanelLink
+}
+
+type NavItem = {
+  id: string
+  label: string
+  href: string
+  panel?: Panel
+}
+
+const NAV: NavItem[] = [
+  { id: 'accueil', label: 'Accueil', href: '#home' },
+  {
+    id: 'solutions',
+    label: 'Solutions',
+    href: '#contact',
+    panel: {
+      note: 'Un seul partenaire de confiance pour toute votre informatique.',
+      cta: { label: 'Demander un devis', href: '#contact' },
+      cards: [
+        {
+          eyebrow: 'Intégré',
+          title: 'Solutions intégrées',
+          desc: 'Infrastructure, réseau et sécurité gérés de bout en bout, par une seule équipe.',
+          href: '#contact',
+          image: '/website-content/about-01.webp',
+          imageAlt: 'Ingénieurs SSI supervisant une infrastructure informatique',
+          links: [
+            { label: 'Cybersécurité', href: '#contact' },
+            { label: 'Infrastructure & Réseaux', href: '#contact' },
+            { label: 'Cloud & Infogérance', href: '#contact' },
+          ],
+        },
+        {
+          eyebrow: 'Écosystème',
+          title: 'Écosystème & services',
+          desc: 'Développement, conseil et support connectés à votre système d’information pour le faire évoluer.',
+          href: '#contact',
+          image: '/website-content/about-02.webp',
+          imageAlt: 'Équipe SSI en atelier de conseil et de développement',
+          links: [
+            { label: 'Développement sur mesure', href: '#contact' },
+            { label: 'Audit & Conseil', href: '#contact' },
+            { label: 'Support & Maintenance', href: '#contact' },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    id: 'about',
+    label: 'À propos',
+    href: '#about',
+    panel: {
+      note: 'Une équipe de proximité, partout en Tunisie.',
+      cta: { label: 'En savoir plus sur SSI', href: '#about' },
+      cards: [
+        {
+          eyebrow: 'L’entreprise',
+          title: 'Qui sommes-nous',
+          desc: 'Plus de dix ans au service de la transformation numérique des entreprises tunisiennes.',
+          href: '#about',
+          image: '/website-content/about-03.webp',
+          imageAlt: 'Les bureaux et l’équipe de SSI',
+          links: [
+            { label: 'Notre mission', href: '#about' },
+            { label: 'Notre approche', href: '#about' },
+            { label: 'Nos valeurs', href: '#about' },
+          ],
+        },
+        {
+          eyebrow: 'Confiance',
+          title: 'Pourquoi SSI',
+          desc: 'Expertise certifiée, proximité et sécurité par conception à chaque étape de vos projets.',
+          href: '#about',
+          image: '/website-content/about-01.webp',
+          imageAlt: 'Ingénieurs SSI au travail',
+          links: [
+            { label: 'Nos engagements', href: '#about' },
+            { label: 'Sécurité par conception', href: '#about' },
+            { label: 'Réalisations', href: '#realisations' },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    id: 'realisations',
+    label: 'Réalisations',
+    href: '#realisations',
+    panel: {
+      note: 'Des projets concrets, des résultats mesurables.',
+      cta: { label: 'Voir toutes nos réalisations', href: '#realisations' },
+      cards: [
+        {
+          eyebrow: 'Étude de cas',
+          title: 'Refonte d’infrastructure',
+          desc: 'Réseau et serveurs redondés à haute disponibilité pour un groupe industriel.',
+          href: '#realisations',
+          image: '/website-content/about-02.webp',
+          imageAlt: 'Projet d’infrastructure réseau livré par SSI',
+          links: [
+            { label: 'Infrastructure & Réseaux', href: '#realisations' },
+            { label: 'Cloud & Infogérance', href: '#realisations' },
+          ],
+        },
+        {
+          eyebrow: 'Étude de cas',
+          title: 'Sécurité & conformité',
+          desc: 'Audit complet, SOC managé et plan de remédiation pour des acteurs sensibles.',
+          href: '#realisations',
+          image: '/website-content/about-03.webp',
+          imageAlt: 'Supervision et sécurité des systèmes par SSI',
+          links: [
+            { label: 'Cybersécurité', href: '#realisations' },
+            { label: 'Supervision 24/7', href: '#realisations' },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    id: 'tarifs',
+    label: 'Tarifs',
+    href: '#tarifs',
+    panel: {
+      note: 'Des forfaits clairs, sans engagement caché.',
+      cta: { label: 'Comparer les offres', href: '#tarifs' },
+      cards: [
+        {
+          title: 'Essentiel',
+          price: '290',
+          period: 'DT / mois',
+          desc: 'Pour les TPE et petites structures.',
+          href: '#tarifs',
+          links: [
+            { label: 'Supervision & maintenance', href: '#tarifs' },
+            { label: 'Support en heures ouvrables', href: '#tarifs' },
+          ],
+        },
+        {
+          eyebrow: 'Populaire',
+          title: 'Professionnel',
+          price: '690',
+          period: 'DT / mois',
+          desc: 'Pour les PME en croissance.',
+          href: '#tarifs',
+          links: [
+            { label: 'Cybersécurité managée', href: '#tarifs' },
+            { label: 'Support prioritaire 7j/7', href: '#tarifs' },
+          ],
+        },
+        {
+          title: 'Entreprise',
+          price: 'Sur devis',
+          desc: 'Pour les organisations multi-sites.',
+          href: '#tarifs',
+          links: [
+            { label: 'Supervision 24/7 (SOC)', href: '#tarifs' },
+            { label: 'Plan de reprise (PRA / PCA)', href: '#tarifs' },
+          ],
+        },
+      ],
+    },
+  },
 ]
+
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  )
+}
+
+function Arrow() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14M12 5l7 7-7 7" />
+    </svg>
+  )
+}
+
+function Dot() {
+  return <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-primary-50 text-primary">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  </span>
+}
+
+/* One card inside a mega panel — image category card or a plan card. */
+function MegaCard({ card, onNavigate }: { card: PanelCard; onNavigate: () => void }) {
+  return (
+    <Link
+      href={card.href}
+      onClick={onNavigate}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white transition hover:border-primary/30 hover:shadow-card"
+    >
+      {card.image ? (
+        <div className="relative w-full overflow-hidden max-lg:aspect-[16/10] lg:flex-1">
+          <Image
+            src={card.image}
+            alt={card.imageAlt ?? ''}
+            fill
+            unoptimized
+            sizes="(max-width: 1024px) 90vw, 340px"
+            className="object-cover transition duration-500 group-hover:scale-[1.04]"
+          />
+          {card.eyebrow && (
+            <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 font-heading text-xs font-bold text-primary backdrop-blur">
+              {card.eyebrow}
+            </span>
+          )}
+        </div>
+      ) : null}
+
+      <div className="flex flex-1 flex-col p-4 lg:p-5">
+        {card.eyebrow && !card.image && (
+          <span className="mb-2 inline-flex w-fit rounded-full bg-primary-50 px-3 py-1 font-heading text-xs font-bold text-primary">
+            {card.eyebrow}
+          </span>
+        )}
+        {card.price && (
+          <p className="font-heading text-navy">
+            <span className="text-3xl font-bold">{card.price}</span>
+            {card.period && <span className="ml-1 text-sm text-slatebody">{card.period}</span>}
+          </p>
+        )}
+        <h3 className="mt-1 font-heading text-lg font-bold text-navy transition group-hover:text-primary">
+          {card.title}
+        </h3>
+        <p className="mt-2 text-sm leading-relaxed text-slatebody">{card.desc}</p>
+
+        {card.links && (
+          <ul className="mt-4 space-y-2 border-t border-black/5 pt-4">
+            {card.links.map((l) => (
+              <li key={l.label} className="flex items-center gap-2.5 text-sm font-semibold text-navy">
+                <Dot />
+                {l.label}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <span className="mt-auto flex items-center gap-1.5 pt-4 font-heading text-sm font-bold text-primary opacity-0 transition group-hover:opacity-100">
+          En savoir plus <Arrow />
+        </span>
+      </div>
+    </Link>
+  )
+}
+
+/* Full mega panel content for one nav item. */
+function MegaPanel({ panel, onNavigate }: { panel: Panel; onNavigate: () => void }) {
+  const cols = panel.cards.length >= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'
+  return (
+    <div>
+      <div className={`grid gap-4 sm:grid-cols-2 ${cols} lg:h-[340px]`}>
+        {panel.cards.map((card) => (
+          <MegaCard key={card.title} card={card} onNavigate={onNavigate} />
+        ))}
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-soft px-5 py-4">
+        <p className="text-sm text-slatebody">{panel.note}</p>
+        <Link
+          href={panel.cta.href}
+          onClick={onNavigate}
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-heading text-sm font-bold text-white shadow-float transition hover:bg-primary-700"
+        >
+          {panel.cta.label} <Arrow />
+        </Link>
+      </div>
+    </div>
+  )
+}
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [active, setActive] = useState<string | null>(null)
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   const reduce = useReducedMotion()
 
   useEffect(() => {
@@ -25,103 +327,245 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  return (
-    <motion.header
-      initial={reduce ? false : { y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white shadow-card' : ''
-      }`}
-    >
-      <div className="mx-auto flex h-20 max-w-content items-center justify-between px-6">
-        <Logo priority />
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setActive(null)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-9 lg:flex">
-          {navLinks.map((link, i) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`font-heading text-[15px] font-semibold transition hover:text-primary ${
-                i === 0 ? 'text-navy' : 'text-slatebody'
+  const activeItem = NAV.find((n) => n.id === active) ?? null
+  // The bar turns solid white when scrolled, when a panel is open, or on hover-open.
+  const solid = scrolled || activeItem !== null
+
+  const closeAll = () => {
+    setActive(null)
+    setMobileOpen(false)
+    setMobileExpanded(null)
+  }
+
+  return (
+    <>
+      <motion.header
+        initial={reduce ? false : { y: -24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: EASE }}
+        onMouseLeave={() => setActive(null)}
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+          solid ? 'bg-white shadow-card' : ''
+        }`}
+      >
+        <div className="mx-auto flex h-20 max-w-content items-center justify-between px-6">
+          <Logo priority />
+
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-8 lg:flex">
+            {NAV.map((item) =>
+              item.panel ? (
+                <button
+                  key={item.id}
+                  type="button"
+                  onMouseEnter={() => setActive(item.id)}
+                  onFocus={() => setActive(item.id)}
+                  onClick={() => setActive((a) => (a === item.id ? null : item.id))}
+                  aria-expanded={active === item.id}
+                  className={`flex items-center gap-1.5 font-heading text-[15px] font-semibold transition ${
+                    active === item.id ? 'text-primary' : 'text-navy hover:text-primary'
+                  }`}
+                >
+                  {item.label}
+                  <Chevron open={active === item.id} />
+                </button>
+              ) : (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onMouseEnter={() => setActive(null)}
+                  onClick={closeAll}
+                  className="font-heading text-[15px] font-semibold text-navy transition hover:text-primary"
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
+          </nav>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-4">
+            <a
+              href="tel:+21671000000"
+              className={`hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary ${
+                scrolled ? 'xl:flex' : ''
               }`}
             >
-              {link.label}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" />
+              </svg>
+              +216 71 000 000
+            </a>
+            <Link
+              href="#contact"
+              onClick={closeAll}
+              className={`hidden rounded-full px-6 py-2.5 font-heading text-[15px] font-bold shadow-float transition sm:inline-block ${
+                solid
+                  ? 'bg-primary text-white hover:bg-primary-700'
+                  : 'bg-primary text-white hover:bg-primary-700 lg:bg-white lg:text-primary lg:hover:bg-white/90'
+              }`}
+            >
+              Devis gratuit
             </Link>
-          ))}
-        </nav>
-
-        {/* Right actions */}
-        <div className="flex items-center gap-4">
-          {/* Phone shows in the white bar on scroll; at the top the pulled-in blue
-              sphere sits where it would be, so we keep the hero right side clean */}
-          <a
-            href="tel:+21671000000"
-            className={`hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary ${
-              scrolled ? 'xl:flex' : ''
-            }`}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" />
-            </svg>
-            +216 71 000 000
-          </a>
-          <Link
-            href="#contact"
-            className={`hidden rounded-full px-6 py-2.5 font-heading text-[15px] font-bold shadow-float transition sm:inline-block ${
-              scrolled
-                ? 'bg-primary text-white hover:bg-primary-700'
-                : 'bg-primary text-white hover:bg-primary-700 lg:bg-white lg:text-primary lg:hover:bg-white/90'
-            }`}
-          >
-            Devis gratuit
-          </Link>
-          <button
-            aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-            aria-expanded={mobileOpen}
-            className="grid h-11 w-11 place-items-center rounded-full text-navy lg:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-              {mobileOpen ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-            </svg>
-          </button>
+            <button
+              aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-expanded={mobileOpen}
+              className="grid h-11 w-11 place-items-center rounded-full text-navy lg:hidden"
+              onClick={() => setMobileOpen((o) => !o)}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                {mobileOpen ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={reduce ? false : { height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-black/5 bg-white lg:hidden"
-          >
-            <nav className="flex flex-col px-6 pb-6 pt-2">
-              {navLinks.map((link) => (
+        {/* Desktop mega panel — persists while open, content crossfades on switch */}
+        <AnimatePresence>
+          {activeItem?.panel && (
+            <motion.div
+              key="mega"
+              initial={reduce ? false : { opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0 }}
+              transition={{ duration: 0.26, ease: EASE }}
+              className="hidden overflow-hidden border-t border-black/5 bg-white lg:block"
+            >
+              <div className="mx-auto max-w-content px-6 pb-7 pt-6">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeItem.id}
+                    initial={reduce ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                    transition={{ duration: 0.18, ease: EASE }}
+                  >
+                    <MegaPanel panel={activeItem.panel} onNavigate={closeAll} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile menu — accordion mega */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={reduce ? false : { height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: EASE }}
+              className="overflow-hidden border-t border-black/5 bg-white lg:hidden"
+            >
+              <nav className="max-h-[70vh] overflow-y-auto px-6 pb-6 pt-2">
+                {NAV.map((item) =>
+                  item.panel ? (
+                    <div key={item.id} className="border-b border-black/5">
+                      <button
+                        type="button"
+                        onClick={() => setMobileExpanded((x) => (x === item.id ? null : item.id))}
+                        aria-expanded={mobileExpanded === item.id}
+                        className="flex w-full items-center justify-between py-3.5 font-heading font-semibold text-navy"
+                      >
+                        {item.label}
+                        <Chevron open={mobileExpanded === item.id} />
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {mobileExpanded === item.id && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.24, ease: EASE }}
+                            className="overflow-hidden"
+                          >
+                            <div className="grid gap-3 pb-4">
+                              {item.panel.cards.map((card) => (
+                                <Link
+                                  key={card.title}
+                                  href={card.href}
+                                  onClick={closeAll}
+                                  className="flex gap-3 rounded-xl border border-black/5 p-3"
+                                >
+                                  {card.image && (
+                                    <span className="relative h-14 w-16 shrink-0 overflow-hidden rounded-lg bg-soft">
+                                      <Image
+                                        src={card.image}
+                                        alt={card.imageAlt ?? ''}
+                                        fill
+                                        unoptimized
+                                        sizes="64px"
+                                        className="object-cover"
+                                      />
+                                    </span>
+                                  )}
+                                  <span className="min-w-0">
+                                    <span className="flex items-baseline gap-2">
+                                      {card.price && (
+                                        <span className="font-heading text-base font-bold text-navy">
+                                          {card.price}
+                                          {card.period && (
+                                            <span className="ml-1 text-xs font-normal text-slatebody">{card.period}</span>
+                                          )}
+                                        </span>
+                                      )}
+                                      <span className="font-heading text-sm font-bold text-navy">{card.title}</span>
+                                    </span>
+                                    <span className="mt-0.5 block text-xs leading-relaxed text-slatebody">{card.desc}</span>
+                                  </span>
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      key={item.id}
+                      href={item.href}
+                      onClick={closeAll}
+                      className="block border-b border-black/5 py-3.5 font-heading font-semibold text-navy"
+                    >
+                      {item.label}
+                    </Link>
+                  )
+                )}
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="border-b border-black/5 py-3 font-heading font-semibold text-navy"
+                  href="#contact"
+                  onClick={closeAll}
+                  className="mt-4 block rounded-full bg-primary py-3 text-center font-heading font-bold text-white"
                 >
-                  {link.label}
+                  Demander un devis
                 </Link>
-              ))}
-              <Link
-                href="#contact"
-                onClick={() => setMobileOpen(false)}
-                className="mt-4 rounded-full bg-primary py-3 text-center font-heading font-bold text-white"
-              >
-                Demander un devis
-              </Link>
-            </nav>
-          </motion.div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+
+      {/* Scrim behind the open mega panel (click / tap to close) */}
+      <AnimatePresence>
+        {activeItem && (
+          <motion.button
+            aria-hidden
+            tabIndex={-1}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setActive(null)}
+            className="fixed inset-0 z-40 hidden cursor-default bg-navy/10 lg:block"
+          />
         )}
       </AnimatePresence>
-    </motion.header>
+    </>
   )
 }

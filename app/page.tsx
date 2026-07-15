@@ -1,7 +1,8 @@
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import WhyChooseUs from '@/components/WhyChooseUs'
-import Features from '@/components/Features'
+// Features (the "Solutions" section) now lives in the navbar mega-menu.
+// Kept in the codebase for rollback: import Features from '@/components/Features'
 import Projects from '@/components/Projects'
 import Pricing from '@/components/Pricing'
 import FAQ from '@/components/FAQ'
@@ -16,7 +17,6 @@ export default function Home() {
       <main>
         <Hero />
         <WhyChooseUs />
-        <Features />
         <Projects />
         <Pricing />
         <FAQ />

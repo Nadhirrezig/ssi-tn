@@ -28,7 +28,7 @@ export default function CTABand() {
                   Demander un devis gratuit
                 </a>
                 <Link
-                  href="#services"
+                  href="#contact"
                   className="rounded-full border border-white/40 px-9 py-4 font-heading text-base font-bold text-white transition hover:bg-white/10"
                 >
                   Voir nos services

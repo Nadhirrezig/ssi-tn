@@ -62,7 +62,7 @@ export default function Hero() {
               Demander un devis
             </Link>
             <Link
-              href="#services"
+              href="#contact"
               className="group inline-flex items-center gap-2 rounded-full border border-black/10 px-7 py-4 font-heading text-base font-bold text-navy transition hover:border-primary hover:text-primary"
             >
               Découvrir nos services
