@@ -88,6 +88,9 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
           className="relative mx-auto h-[440px] w-full max-w-[440px] sm:h-[560px] sm:max-w-[560px] lg:mx-0 lg:h-[740px] lg:max-w-none lg:self-start"
         >
+          {/* Whole visual group — pulled toward the right edge on desktop so only
+              ~70% of the sphere shows and more air opens up beside the copy */}
+          <div className="relative h-full w-full lg:translate-x-[27%]">
           {/* The disc — cut by the top of the page so it covers the navbar area; the
               transparent header sits on it until the white bar pops in on scroll */}
           <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:top-[-180px] lg:h-[146%]">
@@ -122,6 +125,7 @@ export default function Hero() {
             <path d="M2 10c8-8 14 8 22 0M2 22c8-8 14 8 22 0M2 34c8-8 14 8 22 0" />
             <path d="M30 10c8-8 14 8 22 0M30 22c8-8 14 8 22 0M30 34c8-8 14 8 22 0" />
           </svg>
+          </div>
         </motion.div>
       </div>
     </section>

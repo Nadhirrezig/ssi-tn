@@ -54,12 +54,12 @@ export default function Header() {
 
         {/* Right actions */}
         <div className="flex items-center gap-4">
+          {/* Phone shows in the white bar on scroll; at the top the pulled-in blue
+              sphere sits where it would be, so we keep the hero right side clean */}
           <a
             href="tel:+21671000000"
-            className={`hidden items-center gap-2 font-heading text-[15px] font-bold transition xl:flex ${
-              scrolled
-                ? 'text-navy hover:text-primary'
-                : 'text-navy hover:text-primary lg:text-white lg:hover:text-white/80'
+            className={`hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary ${
+              scrolled ? 'xl:flex' : ''
             }`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
