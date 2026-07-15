@@ -108,7 +108,7 @@ export default function Hero() {
           className="relative mx-auto h-[440px] w-full max-w-[440px] sm:h-[560px] sm:max-w-[560px] lg:mx-0 lg:h-[740px] lg:max-w-none lg:self-start"
         >
           {/* The disc — apex tucks under the fixed navbar, right side spills past the container */}
-          <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:left-[4%] lg:h-[106%]">
+          <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:left-[4%] lg:top-[-28px] lg:h-[106%]">
             {/* bright blue quarter over the disc's bottom-right edge */}
             <div className="absolute bottom-[1%] right-[7%] h-16 w-16 rounded-tl-[999px] bg-accentBlue sm:h-24 sm:w-24" />
             {/* cut-out portrait sits on the disc; its flat bottom edge drops past the curve */}
