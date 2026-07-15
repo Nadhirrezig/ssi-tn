@@ -100,31 +100,46 @@ export default function Hero() {
           </motion.dl>
         </motion.div>
 
-        {/* Visual — large brand sphere that reaches up under the navbar */}
+        {/* Visual — large brand disc rising up under the navbar, like the Base landing */}
         <motion.div
           initial={reduce ? false : { opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-          className="relative mx-auto h-[420px] w-full max-w-[380px] sm:h-[560px] sm:max-w-[460px] lg:-mt-6 lg:h-[680px] lg:max-w-[520px]"
+          className="relative mx-auto h-[440px] w-full max-w-[440px] sm:h-[560px] sm:max-w-[560px] lg:mx-0 lg:h-[740px] lg:max-w-none lg:self-start"
         >
-          {/* The sphere — clips the cut-out portrait into a circle (overflow hidden) */}
-          <div className="absolute left-1/2 top-0 aspect-square w-[124%] -translate-x-1/2 overflow-hidden rounded-full bg-primary shadow-[0_50px_90px_-40px_rgba(79,91,255,0.65)]">
-            {/* glossy highlight for depth */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_32%_22%,rgba(255,255,255,0.32),transparent_55%)]" />
-            {/* transparent portrait sits inside the sphere; the blue shows through */}
-            <Image
-              src="/website-content/hero.webp"
-              alt="Collaboratrice SSI souriante travaillant sur son ordinateur portable"
-              fill
-              priority
-              unoptimized
-              sizes="(max-width: 1024px) 90vw, 640px"
-              className="object-cover object-bottom"
-            />
+          {/* The disc — apex tucks under the fixed navbar, right side spills past the container */}
+          <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:left-[4%] lg:h-[106%]">
+            {/* bright blue quarter over the disc's bottom-right edge */}
+            <div className="absolute bottom-[1%] right-[7%] h-16 w-16 rounded-tl-[999px] bg-accentBlue sm:h-24 sm:w-24" />
+            {/* cut-out portrait sits on the disc; its flat bottom edge drops past the curve */}
+            <div className="absolute inset-x-[-14%] bottom-[-1%] aspect-[752/686]">
+              <Image
+                src="/website-content/hero.webp"
+                alt="Collaboratrice SSI souriante travaillant sur son ordinateur portable"
+                fill
+                priority
+                unoptimized
+                sizes="(max-width: 1024px) 90vw, 760px"
+                className="object-contain object-bottom"
+              />
+            </div>
           </div>
 
-          {/* Small accent square */}
-          <div className="absolute right-0 top-[28%] h-16 w-16 rounded-2xl bg-accentYellow shadow-card" />
+          {/* Yellow quarter over the disc's left edge */}
+          <div className="absolute left-[-5%] top-[34%] h-24 w-24 rounded-br-[999px] bg-accentYellow sm:h-32 sm:w-32 lg:h-36 lg:w-36" />
+
+          {/* Coral waves near the disc's lower-left edge */}
+          <svg
+            className="absolute bottom-[20%] left-[6%] w-20 text-accentCoral sm:w-24"
+            viewBox="0 0 80 40"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          >
+            <path d="M2 10c8-8 14 8 22 0M2 22c8-8 14 8 22 0M2 34c8-8 14 8 22 0" />
+            <path d="M30 10c8-8 14 8 22 0M30 22c8-8 14 8 22 0M30 34c8-8 14 8 22 0" />
+          </svg>
 
           {/* Floating trust badge */}
           <motion.div

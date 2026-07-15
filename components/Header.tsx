@@ -31,7 +31,7 @@ export default function Header() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/95 shadow-card backdrop-blur' : ''
+        scrolled ? 'bg-white shadow-card' : ''
       }`}
     >
       <div className="mx-auto flex h-20 max-w-content items-center justify-between px-6">
