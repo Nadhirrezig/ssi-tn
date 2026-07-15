@@ -90,11 +90,11 @@ export default function Hero() {
         >
           {/* The disc — cut by the top of the page so it covers the navbar area; the
               transparent header sits on it until the white bar pops in on scroll */}
-          <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:top-[-180px] lg:h-[128%]">
+          <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:top-[-180px] lg:h-[146%]">
             {/* bright blue quarter over the disc's bottom-right edge */}
-            <div className="absolute bottom-[1%] right-[7%] h-16 w-16 rounded-tl-[999px] bg-accentBlue sm:h-24 sm:w-24 lg:bottom-[-1%] lg:right-[24%]" />
+            <div className="absolute bottom-[1%] right-[7%] h-16 w-16 rounded-tl-[999px] bg-accentBlue sm:h-24 sm:w-24 lg:bottom-[11%] lg:right-[28%]" />
             {/* cut-out portrait sits on the disc; its flat bottom edge drops past the curve */}
-            <div className="absolute inset-x-[-14%] bottom-[-1%] aspect-[752/686] lg:left-[-9%] lg:right-[10%]">
+            <div className="absolute inset-x-[-14%] bottom-[-1%] aspect-[752/686] lg:bottom-[13%] lg:left-[-6%] lg:right-[19%]">
               <Image
                 src="/website-content/hero.webp"
                 alt="Collaboratrice SSI souriante travaillant sur son ordinateur portable"
@@ -112,7 +112,7 @@ export default function Hero() {
 
           {/* Coral waves near the disc's lower-left edge */}
           <svg
-            className="absolute bottom-[20%] left-[6%] w-20 text-accentCoral sm:w-24 lg:bottom-[7%] lg:left-[20%]"
+            className="absolute bottom-[20%] left-[6%] w-20 text-accentCoral sm:w-24 lg:bottom-[7%] lg:left-[17%]"
             viewBox="0 0 80 40"
             fill="none"
             stroke="currentColor"
