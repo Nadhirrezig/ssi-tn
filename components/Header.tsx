@@ -74,43 +74,8 @@ const NAV: NavItem[] = [
       ],
     },
   },
-  {
-    id: 'about',
-    label: 'À propos',
-    href: '#about',
-    panel: {
-      note: 'Une équipe de proximité, partout en Tunisie.',
-      cta: { label: 'En savoir plus sur SSI', href: '#about' },
-      cards: [
-        {
-          eyebrow: 'L’entreprise',
-          title: 'Qui sommes-nous',
-          desc: 'Plus de dix ans au service de la transformation numérique des entreprises tunisiennes.',
-          href: '#about',
-          image: '/website-content/about-03.webp',
-          imageAlt: 'Les bureaux et l’équipe de SSI',
-          links: [
-            { label: 'Notre mission', href: '#about' },
-            { label: 'Notre approche', href: '#about' },
-            { label: 'Nos valeurs', href: '#about' },
-          ],
-        },
-        {
-          eyebrow: 'Confiance',
-          title: 'Pourquoi SSI',
-          desc: 'Expertise certifiée, proximité et sécurité par conception à chaque étape de vos projets.',
-          href: '#about',
-          image: '/website-content/about-01.webp',
-          imageAlt: 'Ingénieurs SSI au travail',
-          links: [
-            { label: 'Nos engagements', href: '#about' },
-            { label: 'Sécurité par conception', href: '#about' },
-            { label: 'Réalisations', href: '#realisations' },
-          ],
-        },
-      ],
-    },
-  },
+  // À propos is a plain link (no mega panel) — it navigates to the about page.
+  { id: 'about', label: 'À propos', href: '#about' },
   {
     id: 'realisations',
     label: 'Réalisations',
@@ -141,50 +106,6 @@ const NAV: NavItem[] = [
           links: [
             { label: 'Cybersécurité', href: '#realisations' },
             { label: 'Supervision 24/7', href: '#realisations' },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    id: 'tarifs',
-    label: 'Tarifs',
-    href: '#tarifs',
-    panel: {
-      note: 'Des forfaits clairs, sans engagement caché.',
-      cta: { label: 'Comparer les offres', href: '#tarifs' },
-      cards: [
-        {
-          title: 'Essentiel',
-          price: '290',
-          period: 'DT / mois',
-          desc: 'Pour les TPE et petites structures.',
-          href: '#tarifs',
-          links: [
-            { label: 'Supervision & maintenance', href: '#tarifs' },
-            { label: 'Support en heures ouvrables', href: '#tarifs' },
-          ],
-        },
-        {
-          eyebrow: 'Populaire',
-          title: 'Professionnel',
-          price: '690',
-          period: 'DT / mois',
-          desc: 'Pour les PME en croissance.',
-          href: '#tarifs',
-          links: [
-            { label: 'Cybersécurité managée', href: '#tarifs' },
-            { label: 'Support prioritaire 7j/7', href: '#tarifs' },
-          ],
-        },
-        {
-          title: 'Entreprise',
-          price: 'Sur devis',
-          desc: 'Pour les organisations multi-sites.',
-          href: '#tarifs',
-          links: [
-            { label: 'Supervision 24/7 (SOC)', href: '#tarifs' },
-            { label: 'Plan de reprise (PRA / PCA)', href: '#tarifs' },
           ],
         },
       ],

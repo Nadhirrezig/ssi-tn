@@ -50,7 +50,6 @@ export default function Footer() {
             <ul className="mt-5 space-y-3 text-base">
               <li><Link href="#about" className="transition hover:text-primary">À propos</Link></li>
               <li><Link href="#realisations" className="transition hover:text-primary">Réalisations</Link></li>
-              <li><Link href="#tarifs" className="transition hover:text-primary">Tarifs</Link></li>
               <li><Link href="#faq" className="transition hover:text-primary">FAQ</Link></li>
             </ul>
           </div>
