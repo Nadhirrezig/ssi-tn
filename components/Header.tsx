@@ -56,7 +56,11 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <a
             href="tel:+21671000000"
-            className="hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary xl:flex"
+            className={`hidden items-center gap-2 font-heading text-[15px] font-bold transition xl:flex ${
+              scrolled
+                ? 'text-navy hover:text-primary'
+                : 'text-navy hover:text-primary lg:text-white lg:hover:text-white/80'
+            }`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" />
@@ -65,7 +69,11 @@ export default function Header() {
           </a>
           <Link
             href="#contact"
-            className="hidden rounded-full bg-primary px-6 py-2.5 font-heading text-[15px] font-bold text-white shadow-float transition hover:bg-primary-700 sm:inline-block"
+            className={`hidden rounded-full px-6 py-2.5 font-heading text-[15px] font-bold shadow-float transition sm:inline-block ${
+              scrolled
+                ? 'bg-primary text-white hover:bg-primary-700'
+                : 'bg-primary text-white hover:bg-primary-700 lg:bg-white lg:text-primary lg:hover:bg-white/90'
+            }`}
           >
             Devis gratuit
           </Link>

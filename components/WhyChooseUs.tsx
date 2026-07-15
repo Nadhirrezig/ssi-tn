@@ -64,12 +64,6 @@ export default function WhyChooseUs() {
           {/* Quiet brand accents */}
           <div className="absolute -bottom-6 left-1/2 -z-10 h-28 w-28 -translate-x-1/2 rounded-full bg-primary/90" />
           <div className="absolute -top-4 right-6 h-16 w-16 rounded-bl-[999px] bg-accentYellow" />
-
-          {/* Floating proof card */}
-          <div className="absolute -bottom-5 -right-3 rounded-2xl bg-white p-5 shadow-card sm:-right-6">
-            <p className="font-heading text-3xl font-bold text-primary">98%</p>
-            <p className="mt-1 text-xs text-slatebody">de clients satisfaits</p>
-          </div>
         </Reveal>
 
         {/* Copy */}

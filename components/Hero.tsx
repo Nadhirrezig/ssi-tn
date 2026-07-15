@@ -16,12 +16,6 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 }
 
-const stats = [
-  { value: '10+', label: "ans d'expertise" },
-  { value: '200+', label: 'projets livrés' },
-  { value: '24/7', label: 'support & supervision' },
-]
-
 export default function Hero() {
   const reduce = useReducedMotion()
 
@@ -85,19 +79,6 @@ export default function Hero() {
               </svg>
             </Link>
           </motion.div>
-
-          {/* Trust stats */}
-          <motion.dl
-            variants={item}
-            className="mt-12 flex flex-wrap gap-x-8 gap-y-4 divide-x divide-black/10"
-          >
-            {stats.map((s, i) => (
-              <div key={s.label} className={i === 0 ? '' : 'pl-8'}>
-                <dt className="font-heading text-3xl font-bold text-navy">{s.value}</dt>
-                <dd className="mt-1 text-sm text-slatebody">{s.label}</dd>
-              </div>
-            ))}
-          </motion.dl>
         </motion.div>
 
         {/* Visual — large brand disc rising up under the navbar, like the Base landing */}
@@ -107,12 +88,13 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
           className="relative mx-auto h-[440px] w-full max-w-[440px] sm:h-[560px] sm:max-w-[560px] lg:mx-0 lg:h-[740px] lg:max-w-none lg:self-start"
         >
-          {/* The disc — apex tucks under the fixed navbar, right side spills past the container */}
-          <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:left-[4%] lg:top-[-28px] lg:h-[106%]">
+          {/* The disc — cut by the top of the page so it covers the navbar area; the
+              transparent header sits on it until the white bar pops in on scroll */}
+          <div className="absolute left-0 top-[-12px] aspect-square h-full rounded-full bg-primary lg:top-[-180px] lg:h-[128%]">
             {/* bright blue quarter over the disc's bottom-right edge */}
-            <div className="absolute bottom-[1%] right-[7%] h-16 w-16 rounded-tl-[999px] bg-accentBlue sm:h-24 sm:w-24" />
+            <div className="absolute bottom-[1%] right-[7%] h-16 w-16 rounded-tl-[999px] bg-accentBlue sm:h-24 sm:w-24 lg:bottom-[-1%] lg:right-[24%]" />
             {/* cut-out portrait sits on the disc; its flat bottom edge drops past the curve */}
-            <div className="absolute inset-x-[-14%] bottom-[-1%] aspect-[752/686]">
+            <div className="absolute inset-x-[-14%] bottom-[-1%] aspect-[752/686] lg:left-[-9%] lg:right-[10%]">
               <Image
                 src="/website-content/hero.webp"
                 alt="Collaboratrice SSI souriante travaillant sur son ordinateur portable"
@@ -126,11 +108,11 @@ export default function Hero() {
           </div>
 
           {/* Yellow quarter over the disc's left edge */}
-          <div className="absolute left-[-5%] top-[34%] h-24 w-24 rounded-br-[999px] bg-accentYellow sm:h-32 sm:w-32 lg:h-36 lg:w-36" />
+          <div className="absolute left-[-5%] top-[34%] h-24 w-24 rounded-br-[999px] bg-accentYellow sm:h-32 sm:w-32 lg:left-[-20%] lg:top-[35%] lg:h-40 lg:w-40" />
 
           {/* Coral waves near the disc's lower-left edge */}
           <svg
-            className="absolute bottom-[20%] left-[6%] w-20 text-accentCoral sm:w-24"
+            className="absolute bottom-[20%] left-[6%] w-20 text-accentCoral sm:w-24 lg:bottom-[7%] lg:left-[20%]"
             viewBox="0 0 80 40"
             fill="none"
             stroke="currentColor"
@@ -140,25 +122,6 @@ export default function Hero() {
             <path d="M2 10c8-8 14 8 22 0M2 22c8-8 14 8 22 0M2 34c8-8 14 8 22 0" />
             <path d="M30 10c8-8 14 8 22 0M30 22c8-8 14 8 22 0M30 34c8-8 14 8 22 0" />
           </svg>
-
-          {/* Floating trust badge */}
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE, delay: 0.55 }}
-            className="absolute bottom-4 left-0 flex items-center gap-3 rounded-2xl bg-white p-4 shadow-card sm:-left-4"
-          >
-            <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary-50 text-primary">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-            </span>
-            <div>
-              <p className="font-heading text-lg font-bold leading-none text-navy">99,9%</p>
-              <p className="mt-1 text-xs text-slatebody">Disponibilité garantie</p>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </section>
