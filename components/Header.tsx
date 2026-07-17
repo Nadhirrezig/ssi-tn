@@ -20,6 +20,9 @@ type PanelCard = {
   price?: string
   period?: string
   links?: PanelLink[]
+  cta?: string
+  /** Full-bleed image card with the copy overlaid on it. */
+  hook?: boolean
 }
 
 type Panel = {
@@ -46,17 +49,14 @@ const NAV: NavItem[] = [
       cta: { label: 'Demander un devis', href: '/#contact' },
       cards: [
         {
-          eyebrow: 'Intégré',
-          title: 'Solutions intégrées',
-          desc: 'Infrastructure, réseau et sécurité gérés de bout en bout, par une seule équipe.',
-          href: '/#contact',
-          image: '/website-content/about-01.webp',
-          imageAlt: 'Ingénieurs SSI supervisant une infrastructure informatique',
-          links: [
-            { label: 'Cybersécurité', href: '/#contact' },
-            { label: 'Infrastructure & Réseaux', href: '/#contact' },
-            { label: 'Cloud & Infogérance', href: '/#contact' },
-          ],
+          eyebrow: 'AltosPOS',
+          title: 'Paiement et accès par bracelet NFC',
+          desc: 'Un simple bracelet permet de payer, commander et ouvrir les chambres. Tout est instantané, sans cash, sans carte, sans friction.',
+          href: '/solution/altospos',
+          image: '/Template/p4-1-4.jpg.jpeg',
+          imageAlt: 'Bracelet NFC AltosPOS présenté au-dessus d’un terminal de paiement',
+          cta: 'Voir la solution',
+          hook: true,
         },
         {
           eyebrow: 'Écosystème',
@@ -149,6 +149,38 @@ function Dot() {
 
 /* One card inside a mega panel — image category card or a plan card. */
 function MegaCard({ card, onNavigate }: { card: PanelCard; onNavigate: () => void }) {
+  if (card.hook && card.image) {
+    return (
+      <Link
+        href={card.href}
+        onClick={onNavigate}
+        className="group relative flex h-full min-h-[300px] flex-col justify-end overflow-hidden rounded-2xl border border-black/5 transition hover:border-primary/30 hover:shadow-card"
+      >
+        <Image
+          src={card.image}
+          alt={card.imageAlt ?? ''}
+          fill
+          unoptimized
+          sizes="(max-width: 1024px) 90vw, 560px"
+          className="object-cover transition duration-500 group-hover:scale-[1.04]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent" />
+        <div className="relative p-5 lg:p-6">
+          {card.eyebrow && (
+            <span className="inline-flex rounded-full bg-white/90 px-3 py-1 font-heading text-xs font-bold text-primary backdrop-blur">
+              {card.eyebrow}
+            </span>
+          )}
+          <h3 className="mt-3 font-heading text-lg font-bold text-white">{card.title}</h3>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-white/80">{card.desc}</p>
+          <span className="mt-4 flex items-center gap-1.5 font-heading text-sm font-bold text-white transition group-hover:gap-2.5">
+            {card.cta ?? 'En savoir plus'} <Arrow />
+          </span>
+        </div>
+      </Link>
+    )
+  }
+
   return (
     <Link
       href={card.href}
@@ -202,7 +234,7 @@ function MegaCard({ card, onNavigate }: { card: PanelCard; onNavigate: () => voi
         )}
 
         <span className="mt-auto flex items-center gap-1.5 pt-4 font-heading text-sm font-bold text-primary opacity-0 transition group-hover:opacity-100">
-          En savoir plus <Arrow />
+          {card.cta ?? 'En savoir plus'} <Arrow />
         </span>
       </div>
     </Link>

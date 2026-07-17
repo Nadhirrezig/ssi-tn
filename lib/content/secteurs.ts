@@ -18,8 +18,8 @@ export type Secteur = {
   body: string
   /** Large hero cell (left). */
   hero: SecteurCell
-  /** Two stacked supporting cells (right column). */
-  support: readonly [SecteurCell, SecteurCell]
+  /** Supporting cells stacked in the right column (any count, usually 1–3). */
+  support: readonly SecteurCell[]
 }
 
 export const secteurs: readonly Secteur[] = [

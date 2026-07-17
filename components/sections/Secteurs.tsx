@@ -108,25 +108,22 @@ export default function Secteurs({
                 aria-roledescription="diapositive"
                 aria-label={`Secteur ${i + 1} sur ${count} : ${s.title}`}
                 aria-hidden={!on || undefined}
-                className={`absolute inset-0 grid grid-cols-2 grid-rows-[1.6fr_1fr] gap-3 transition-opacity duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:grid-cols-[868fr_513fr] lg:grid-rows-2 lg:gap-5 ${
+                className={`absolute inset-0 flex flex-col gap-3 transition-opacity duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:flex-row lg:gap-5 ${
                   on ? 'opacity-100' : 'pointer-events-none opacity-0'
                 }`}
               >
                 <Figure
                   cell={s.hero}
                   ratio={HERO_RATIO}
-                  className="col-span-2 col-start-1 row-start-1 lg:col-span-1 lg:row-span-2"
+                  className={s.support.length > 0 ? 'flex-[1.6] lg:flex-[868]' : 'flex-1'}
                 />
-                <Figure
-                  cell={s.support[0]}
-                  ratio={SUPPORT_RATIO}
-                  className="col-start-1 row-start-2 lg:col-start-2 lg:row-start-1"
-                />
-                <Figure
-                  cell={s.support[1]}
-                  ratio={SUPPORT_RATIO}
-                  className="col-start-2 row-start-2 lg:col-start-2 lg:row-start-2"
-                />
+                {s.support.length > 0 && (
+                  <div className="flex flex-1 gap-3 lg:flex-[513] lg:flex-col lg:gap-5">
+                    {s.support.map((cell, j) => (
+                      <Figure key={j} cell={cell} ratio={SUPPORT_RATIO} className="flex-1" />
+                    ))}
+                  </div>
+                )}
               </div>
             )
           })}
