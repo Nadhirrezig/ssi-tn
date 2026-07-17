@@ -6,7 +6,7 @@ import Link from 'next/link'
  * brand reads consistently in the header and footer.
  */
 export default function Logo({
-  href = '#home',
+  href = '/#home',
   imgClassName = 'h-11 w-auto',
   priority = false,
 }: {

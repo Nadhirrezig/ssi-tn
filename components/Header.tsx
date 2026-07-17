@@ -36,76 +36,76 @@ type NavItem = {
 }
 
 const NAV: NavItem[] = [
-  { id: 'accueil', label: 'Accueil', href: '#home' },
+  { id: 'accueil', label: 'Accueil', href: '/#home' },
   {
     id: 'solutions',
     label: 'Solutions',
-    href: '#contact',
+    href: '/#contact',
     panel: {
       note: 'Un seul partenaire de confiance pour toute votre informatique.',
-      cta: { label: 'Demander un devis', href: '#contact' },
+      cta: { label: 'Demander un devis', href: '/#contact' },
       cards: [
         {
           eyebrow: 'Intégré',
           title: 'Solutions intégrées',
           desc: 'Infrastructure, réseau et sécurité gérés de bout en bout, par une seule équipe.',
-          href: '#contact',
+          href: '/#contact',
           image: '/website-content/about-01.webp',
           imageAlt: 'Ingénieurs SSI supervisant une infrastructure informatique',
           links: [
-            { label: 'Cybersécurité', href: '#contact' },
-            { label: 'Infrastructure & Réseaux', href: '#contact' },
-            { label: 'Cloud & Infogérance', href: '#contact' },
+            { label: 'Cybersécurité', href: '/#contact' },
+            { label: 'Infrastructure & Réseaux', href: '/#contact' },
+            { label: 'Cloud & Infogérance', href: '/#contact' },
           ],
         },
         {
           eyebrow: 'Écosystème',
           title: 'Écosystème & services',
           desc: 'Développement, conseil et support connectés à votre système d’information pour le faire évoluer.',
-          href: '#contact',
+          href: '/#contact',
           image: '/website-content/about-02.webp',
           imageAlt: 'Équipe SSI en atelier de conseil et de développement',
           links: [
-            { label: 'Développement sur mesure', href: '#contact' },
-            { label: 'Audit & Conseil', href: '#contact' },
-            { label: 'Support & Maintenance', href: '#contact' },
+            { label: 'Développement sur mesure', href: '/#contact' },
+            { label: 'Audit & Conseil', href: '/#contact' },
+            { label: 'Support & Maintenance', href: '/#contact' },
           ],
         },
       ],
     },
   },
   // À propos is a plain link (no mega panel) — it navigates to the about page.
-  { id: 'about', label: 'À propos', href: '#about' },
+  { id: 'about', label: 'À propos', href: '/#about' },
   {
     id: 'realisations',
     label: 'Réalisations',
-    href: '#realisations',
+    href: '/#realisations',
     panel: {
       note: 'Des projets concrets, des résultats mesurables.',
-      cta: { label: 'Voir toutes nos réalisations', href: '#realisations' },
+      cta: { label: 'Voir toutes nos réalisations', href: '/#realisations' },
       cards: [
         {
           eyebrow: 'Étude de cas',
           title: 'Refonte d’infrastructure',
           desc: 'Réseau et serveurs redondés à haute disponibilité pour un groupe industriel.',
-          href: '#realisations',
+          href: '/#realisations',
           image: '/website-content/about-02.webp',
           imageAlt: 'Projet d’infrastructure réseau livré par SSI',
           links: [
-            { label: 'Infrastructure & Réseaux', href: '#realisations' },
-            { label: 'Cloud & Infogérance', href: '#realisations' },
+            { label: 'Infrastructure & Réseaux', href: '/#realisations' },
+            { label: 'Cloud & Infogérance', href: '/#realisations' },
           ],
         },
         {
           eyebrow: 'Étude de cas',
           title: 'Sécurité & conformité',
           desc: 'Audit complet, SOC managé et plan de remédiation pour des acteurs sensibles.',
-          href: '#realisations',
+          href: '/#realisations',
           image: '/website-content/about-03.webp',
           imageAlt: 'Supervision et sécurité des systèmes par SSI',
           links: [
-            { label: 'Cybersécurité', href: '#realisations' },
-            { label: 'Supervision 24/7', href: '#realisations' },
+            { label: 'Cybersécurité', href: '/#realisations' },
+            { label: 'Supervision 24/7', href: '/#realisations' },
           ],
         },
       ],
@@ -234,7 +234,12 @@ function MegaPanel({ panel, onNavigate }: { panel: Panel; onNavigate: () => void
   )
 }
 
-export default function Header() {
+export default function Header({
+  solid: solidProp = false,
+}: {
+  /** Force the solid white bar from the start (pages without a light hero). */
+  solid?: boolean
+}) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [active, setActive] = useState<string | null>(null)
@@ -255,8 +260,10 @@ export default function Header() {
   }, [])
 
   const activeItem = NAV.find((n) => n.id === active) ?? null
-  // The bar turns solid white when scrolled, when a panel is open, or on hover-open.
-  const solid = scrolled || activeItem !== null
+  // Chrome (phone + button styling) follows scroll or the page-level override;
+  // the bar itself also turns white while a mega panel is open.
+  const chrome = solidProp || scrolled
+  const solid = chrome || activeItem !== null
 
   const closeAll = () => {
     setActive(null)
@@ -315,7 +322,7 @@ export default function Header() {
             <a
               href="tel:+21671000000"
               className={`hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary ${
-                scrolled ? 'xl:flex' : ''
+                chrome ? 'xl:flex' : ''
               }`}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -324,7 +331,7 @@ export default function Header() {
               +216 71 000 000
             </a>
             <Link
-              href="#contact"
+              href="/#contact"
               onClick={closeAll}
               className={`hidden rounded-full px-6 py-2.5 font-heading text-[15px] font-bold shadow-float transition sm:inline-block ${
                 solid
@@ -460,7 +467,7 @@ export default function Header() {
                   )
                 )}
                 <Link
-                  href="#contact"
+                  href="/#contact"
                   onClick={closeAll}
                   className="mt-4 block rounded-full bg-primary py-3 text-center font-heading font-bold text-white"
                 >

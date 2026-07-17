@@ -37,10 +37,10 @@ export default function Footer() {
           <div>
             <h4 className="font-heading text-base font-bold text-navy">Services</h4>
             <ul className="mt-5 space-y-3 text-base">
-              <li><Link href="#contact" className="transition hover:text-primary">Cybersécurité</Link></li>
-              <li><Link href="#contact" className="transition hover:text-primary">Infrastructure & Réseaux</Link></li>
-              <li><Link href="#contact" className="transition hover:text-primary">Développement</Link></li>
-              <li><Link href="#contact" className="transition hover:text-primary">Cloud & Infogérance</Link></li>
+              <li><Link href="/#contact" className="transition hover:text-primary">Cybersécurité</Link></li>
+              <li><Link href="/#contact" className="transition hover:text-primary">Infrastructure & Réseaux</Link></li>
+              <li><Link href="/#contact" className="transition hover:text-primary">Développement</Link></li>
+              <li><Link href="/#contact" className="transition hover:text-primary">Cloud & Infogérance</Link></li>
             </ul>
           </div>
 
@@ -48,9 +48,9 @@ export default function Footer() {
           <div>
             <h4 className="font-heading text-base font-bold text-navy">Entreprise</h4>
             <ul className="mt-5 space-y-3 text-base">
-              <li><Link href="#about" className="transition hover:text-primary">À propos</Link></li>
-              <li><Link href="#realisations" className="transition hover:text-primary">Réalisations</Link></li>
-              <li><Link href="#faq" className="transition hover:text-primary">FAQ</Link></li>
+              <li><Link href="/#about" className="transition hover:text-primary">À propos</Link></li>
+              <li><Link href="/#realisations" className="transition hover:text-primary">Réalisations</Link></li>
+              <li><Link href="/#faq" className="transition hover:text-primary">FAQ</Link></li>
             </ul>
           </div>
 

@@ -4,7 +4,12 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import { useReducedMotion } from 'framer-motion'
 import Reveal from '@/components/motion/Reveal'
-import { showcase, type ShowcaseCard, type ShowcaseMedia } from '@/lib/content/showcase'
+import {
+  showcase,
+  type ShowcaseCard,
+  type ShowcaseContent,
+  type ShowcaseMedia,
+} from '@/lib/content/showcase'
 
 /**
  * Media showcase grid — fixed composition, in reading order:
@@ -177,17 +182,22 @@ function Card({
   )
 }
 
-export default function Showcase() {
-  const [hero, splitLeft, splitRight, wide, narrow] = showcase.cards
+export default function Showcase({
+  content = showcase,
+}: {
+  /** Section content — defaults to the placeholder content. */
+  content?: ShowcaseContent
+}) {
+  const [hero, splitLeft, splitRight, wide, narrow] = content.cards
 
   return (
-    <section aria-label={showcase.title} className="bg-white py-24">
+    <section aria-label={content.title} className="bg-white py-24">
       <div className="mx-auto max-w-content px-6">
         {/* Heading — outside the grid, like the reference */}
         <Reveal className="max-w-3xl">
-          <p className="font-heading text-base font-bold text-primary">{showcase.eyebrow}</p>
+          <p className="font-heading text-base font-bold text-primary">{content.eyebrow}</p>
           <h2 className="mt-4 font-heading text-3xl font-bold leading-tight text-navy sm:text-4xl lg:text-[44px]">
-            {showcase.title}
+            {content.title}
           </h2>
         </Reveal>
 

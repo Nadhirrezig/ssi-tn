@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { secteurs, type SecteurCell } from '@/lib/content/secteurs'
+import { secteurs, type Secteur, type SecteurCell } from '@/lib/content/secteurs'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -64,11 +64,18 @@ function Chevron({ dir }: { dir: 'left' | 'right' }) {
   )
 }
 
-export default function Secteurs() {
+export default function Secteurs({
+  items = secteurs,
+  ariaLabel = 'Secteurs d’activité',
+}: {
+  /** Slides to render — defaults to the placeholder content. */
+  items?: readonly Secteur[]
+  ariaLabel?: string
+}) {
   const [index, setIndex] = useState(0)
   const reduce = useReducedMotion()
-  const count = secteurs.length
-  const active = secteurs[index]
+  const count = items.length
+  const active = items[index]
 
   const go = (i: number) => setIndex(Math.max(0, Math.min(count - 1, i)))
 
@@ -82,14 +89,14 @@ export default function Secteurs() {
   return (
     <section
       aria-roledescription="carrousel"
-      aria-label="Secteurs d’activité"
+      aria-label={ariaLabel}
       className="bg-white py-24"
     >
       <div className="mx-auto max-w-content px-6">
         {/* Mosaic — aspect-locked so it reserves space (zero CLS). Slides are
             stacked and cross-fade; inactive slides are inert. */}
         <div className="relative aspect-[4/5] w-full sm:aspect-[16/11] lg:aspect-[1400/680]">
-          {secteurs.map((s, i) => {
+          {items.map((s, i) => {
             const on = i === index
             return (
               <div
@@ -154,7 +161,7 @@ export default function Secteurs() {
           <div className="flex items-center gap-6 lg:justify-end">
             {/* Pagination indicators */}
             <div className="flex items-center gap-2" role="group" aria-label="Choisir un secteur">
-              {secteurs.map((s, i) => (
+              {items.map((s, i) => (
                 <button
                   key={i}
                   type="button"
