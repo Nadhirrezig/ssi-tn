@@ -3,8 +3,9 @@ import type { ShowcaseContent } from './showcase'
 
 /**
  * Solutions registry — one entry per solution page (/solution/[slug]).
- * Each solution feeds the three sections of the page:
- *   hero      → full-screen video hero (video slot: src null → brand fallback)
+ * Each solution feeds the sections of the page:
+ *   hero      → full-screen image hero (image slot: src null → brand fallback)
+ *   video     → full-screen video section right after the hero
  *   scenarios → the Secteurs carousel (4 slides)
  *   showcase  → the media Showcase grid (5 cards)
  * Media are placeholder slots (src: null) until real assets are added.
@@ -16,7 +17,14 @@ export type SolutionHeroContent = {
   subtitle: string
   /** Small supporting line under the subtitle (availability, platforms…). */
   note?: string
-  video: { src: string | null; poster?: string }
+  image: { src: string | null; alt: string }
+}
+
+export type SolutionVideoContent = {
+  src: string | null
+  poster?: string
+  /** Accessible label for the video. */
+  alt: string
 }
 
 export type Solution = {
@@ -24,6 +32,7 @@ export type Solution = {
   name: string
   metaDescription: string
   hero: SolutionHeroContent
+  video: SolutionVideoContent
   scenarios: readonly Secteur[]
   showcase: ShowcaseContent
 }
@@ -41,7 +50,12 @@ const altospos: Solution = {
       'Gestion multi-points de vente, transactions centralisées et synchronisation en temps réel entre tous vos terminaux. Un traitement rapide des commandes qui accélère le service et améliore la productivité de vos équipes — pensé pour les environnements à forte activité : hôtels, resorts, clubs.',
     note:
       'Accès multi-plateforme : application mobile pour le terrain, interface web pour le pilotage et les analyses, application desktop pour les postes fixes.',
-    video: { src: null },
+    image: { src: null, alt: 'Visuel à venir — AltosPOS en situation' },
+  },
+
+  video: {
+    src: null,
+    alt: 'Vidéo à venir — présentation d’AltosPOS en fonctionnement',
   },
 
   scenarios: [

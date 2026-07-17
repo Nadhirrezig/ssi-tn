@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import type { SolutionHeroContent } from '@/lib/content/solutions'
@@ -7,35 +8,32 @@ import type { SolutionHeroContent } from '@/lib/content/solutions'
 const EASE = [0.22, 1, 0.36, 1] as const
 
 /**
- * Full-screen video hero for solution pages. The video plays muted in a loop
- * behind a scrim (autoplay disabled under prefers-reduced-motion). While the
- * video slot is empty (src: null) a brand gradient fills the frame, with the
- * usual mono slot label.
+ * Full-screen image hero for solution pages. A large photo fills the frame
+ * behind a scrim. While the image slot is empty (src: null) a brand gradient
+ * fills the frame, with the usual mono slot label.
  */
 export default function SolutionHero({ content }: { content: SolutionHeroContent }) {
   const reduce = useReducedMotion()
-  const filled = content.video.src !== null
+  const filled = content.image.src !== null
 
   return (
     <section className="relative flex min-h-screen items-end overflow-hidden bg-navy">
       {/* Media layer */}
       {filled ? (
-        <video
-          src={content.video.src as string}
-          poster={content.video.poster}
-          muted
-          loop
-          playsInline
-          autoPlay={!reduce}
-          preload="metadata"
-          className="absolute inset-0 h-full w-full object-cover"
+        <Image
+          src={content.image.src as string}
+          alt={content.image.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
       ) : (
         <>
-          {/* Brand fallback while the video slot is empty */}
+          {/* Brand fallback while the image slot is empty */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(79,91,255,0.45),transparent_60%)]" />
           <span className="absolute right-6 top-24 font-mono text-sm tracking-wide text-white/40 sm:top-28">
-            vidéo · 1920 × 1080
+            image · 1920 × 1080
           </span>
         </>
       )}

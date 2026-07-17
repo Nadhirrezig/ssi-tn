@@ -7,6 +7,7 @@ import BackToTop from '@/components/BackToTop'
 import Secteurs from '@/components/sections/Secteurs'
 import Showcase from '@/components/sections/Showcase'
 import SolutionHero from '@/components/sections/SolutionHero'
+import SolutionVideo from '@/components/sections/SolutionVideo'
 import { getSolution, solutions } from '@/lib/content/solutions'
 
 type Props = { params: { slug: string } }
@@ -34,6 +35,7 @@ export default function SolutionPage({ params }: Props) {
       <Header solid />
       <main>
         <SolutionHero content={solution.hero} />
+        <SolutionVideo content={solution.video} />
         <div id="fonctionnalites" className="scroll-mt-24">
           <Secteurs items={solution.scenarios} ariaLabel={`Scénarios ${solution.name}`} />
         </div>
