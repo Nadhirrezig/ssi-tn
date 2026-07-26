@@ -57,7 +57,7 @@ const altospos: Solution = {
   },
 
   video: {
-    src: '/Template/p2.mp4',
+    src: '/Template/AltosPOS.mp4',
     alt: 'Présentation d’AltosPOS en fonctionnement',
   },
 
