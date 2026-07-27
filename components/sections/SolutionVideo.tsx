@@ -10,30 +10,60 @@ import type { SolutionVideoContent } from '@/lib/content/solutions'
  * The presentation ships as several files rather than one, so the parts are
  * stacked and played back-to-back to read as a single continuous video: when a
  * part ends the next one is revealed and started, and the last wraps back to
- * the first. Only the current and next parts are preloaded, so the browser
- * never pulls every part at once.
+ * the first.
+ *
+ * The parts weigh tens of MB each, so fetching is kept on a tight leash:
+ * nothing is requested until the section nears the viewport, and the following
+ * part only starts buffering once the current one is half-way through. Two
+ * parts on `preload="auto"` would otherwise race for bandwidth on page load,
+ * for a section that sits below a full-screen hero.
  *
  * Autoplay is disabled under prefers-reduced-motion; the replay control returns
  * to the first part. While the slot is empty (sources: []) a brand gradient
  * fills the frame, with the usual mono slot label.
  */
 export default function SolutionVideo({ content }: { content: SolutionVideoContent }) {
+  const sectionRef = useRef<HTMLElement>(null)
   const refs = useRef<(HTMLVideoElement | null)[]>([])
   const reduce = useReducedMotion()
   const [active, setActive] = useState(0)
+  const [inView, setInView] = useState(false)
+  const [bufferNext, setBufferNext] = useState(false)
 
   const { sources } = content
   const filled = sources.length > 0
   const next = filled ? (active + 1) % sources.length : 0
 
+  // Nothing is fetched until the section is about to be seen.
+  useEffect(() => {
+    const node = sectionRef.current
+    if (!node || !filled) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setInView(true)
+      },
+      { rootMargin: '200px' }
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [filled])
+
   // Drives playback whenever the active part changes, including the first one.
   useEffect(() => {
-    if (!filled || reduce) return
+    if (!filled || reduce || !inView) return
+    setBufferNext(false)
     const video = refs.current[active]
     if (!video) return
     video.currentTime = 0
     void video.play()
-  }, [active, filled, reduce])
+  }, [active, filled, reduce, inView])
+
+  // Raising `preload` alone is not a reliable fetch trigger once an element has
+  // settled on "none", so the hand-off target is loaded explicitly.
+  useEffect(() => {
+    if (!bufferNext || next === active) return
+    refs.current[next]?.load()
+  }, [bufferNext, next, active])
 
   const replay = () => {
     const current = refs.current[active]
@@ -50,7 +80,11 @@ export default function SolutionVideo({ content }: { content: SolutionVideoConte
   }
 
   return (
-    <section aria-label={content.alt} className="relative h-screen w-full overflow-hidden bg-navy">
+    <section
+      ref={sectionRef}
+      aria-label={content.alt}
+      className="relative h-screen w-full overflow-hidden bg-navy"
+    >
       {filled ? (
         <>
           {sources.map((src, index) => (
@@ -65,9 +99,26 @@ export default function SolutionVideo({ content }: { content: SolutionVideoConte
               aria-hidden={index !== active}
               muted
               playsInline
-              // Buffer the next part while this one plays so the hand-off does
-              // not stall; the rest stay unfetched.
-              preload={index === active || index === next ? 'auto' : 'none'}
+              // Off-screen: nothing. In view: the current part, plus the next
+              // one once this one is half-way through so the hand-off does not
+              // stall. The rest stay unfetched.
+              preload={
+                !inView
+                  ? 'none'
+                  : index === active || (index === next && bufferNext)
+                    ? 'auto'
+                    : 'none'
+              }
+              onTimeUpdate={
+                index === active && !bufferNext
+                  ? (e) => {
+                      const v = e.currentTarget
+                      if (v.duration && v.currentTime / v.duration > 0.5) {
+                        setBufferNext(true)
+                      }
+                    }
+                  : undefined
+              }
               onEnded={() => setActive((index + 1) % sources.length)}
               className={`absolute inset-0 h-full w-full object-cover ${
                 index === active ? 'opacity-100' : 'opacity-0'

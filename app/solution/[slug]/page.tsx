@@ -36,10 +36,14 @@ export default function SolutionPage({ params }: Props) {
       <main>
         <SolutionHero content={solution.hero} />
         <SolutionVideo content={solution.video} />
+        {/* Feature block — the hero's "Découvrir les fonctionnalités" lands
+            here, whether or not the solution ships scenarios. */}
         <div id="fonctionnalites" className="scroll-mt-24">
-          <Secteurs items={solution.scenarios} ariaLabel={`Scénarios ${solution.name}`} />
+          {solution.scenarios?.length ? (
+            <Secteurs items={solution.scenarios} ariaLabel={`Scénarios ${solution.name}`} />
+          ) : null}
+          <Showcase content={solution.showcase} />
         </div>
-        <Showcase content={solution.showcase} />
         <CTABand />
       </main>
       <Footer />

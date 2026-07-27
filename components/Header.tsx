@@ -29,14 +29,36 @@ type Panel = {
   cards: PanelCard[]
   note: string
   cta: PanelLink
+  /** Slide the cards instead of laying them all out at once (3+ cards). */
+  carousel?: boolean
 }
 
-type NavItem = {
-  id: string
-  label: string
-  href: string
-  panel?: Panel
+/* Carousel geometry: cards in view at once, the gap between them (gap-4), and
+   the sliver of the next card left showing — the panel is otherwise flush and
+   nothing would suggest there is more to see. Widths are expressed against the
+   clipping box, which the track matches, so a step lands card-on-card. */
+const PER_VIEW = 2
+const GAP = 16
+const PEEK = 56
+
+/** Delay between automatic steps. */
+const AUTOPLAY_MS = 3000
+
+const CARD_W = `calc(${100 / PER_VIEW}% - ${GAP + PEEK / PER_VIEW}px)`
+/** One card plus its gap. */
+const STEP = `(${100 / PER_VIEW}% - ${PEEK / PER_VIEW}px)`
+
+/** How far the track can travel before the last card sits flush right. */
+function maxOffset(count: number) {
+  return `(${(count * 100) / PER_VIEW - 100}% - ${count * (GAP + PEEK / PER_VIEW) - (count - 1) * GAP}px)`
 }
+
+// An item is either a plain link, or a panel item — which may also carry an
+// href, but does not need one: it opens the panel from a button.
+type NavItem = { id: string; label: string } & (
+  | { href: string; panel?: undefined }
+  | { href?: string; panel: Panel }
+)
 
 const NAV: NavItem[] = [
   { id: 'accueil', label: 'Accueil', href: '/#home' },
@@ -47,6 +69,7 @@ const NAV: NavItem[] = [
     panel: {
       note: 'Un seul partenaire de confiance pour toute votre informatique.',
       cta: { label: 'Demander un devis', href: '/#contact' },
+      carousel: true,
       cards: [
         {
           eyebrow: 'AltosPOS',
@@ -59,16 +82,29 @@ const NAV: NavItem[] = [
           hook: true,
         },
         {
+          eyebrow: 'AltosStock',
+          title: 'Gestion de stock',
+          desc: 'Inventaire, suivi des mouvements et réapprovisionnement, synchronisés avec AltosPOS.',
+          href: '/solution/altosstock',
+          image: '/Template/stockxpos.jpg',
+          imageAlt: 'AltosStock connecté à AltosPOS sur le poste de vente',
+          links: [
+            { label: 'Inventaire & suivi de stock', href: '/solution/altosstock' },
+            { label: 'Fiche technique par article', href: '/solution/altosstock' },
+            { label: 'Fournisseurs & réapprovisionnement', href: '/solution/altosstock' },
+          ],
+        },
+        {
           eyebrow: 'Écosystème',
-          title: 'Écosystème & services',
-          desc: 'Développement, conseil et support connectés à votre système d’information pour le faire évoluer.',
+          title: 'Développement sur mesure',
+          desc: 'Applications métier, intégrations et évolutions conçues autour de vos processus et de votre système d’information.',
           href: '/#contact',
           image: '/website-content/about-02.webp',
-          imageAlt: 'Équipe SSI en atelier de conseil et de développement',
+          imageAlt: 'Équipe SSI en atelier de développement sur mesure',
           links: [
-            { label: 'Développement sur mesure', href: '/#contact' },
-            { label: 'Audit & Conseil', href: '/#contact' },
-            { label: 'Support & Maintenance', href: '/#contact' },
+            { label: 'Applications métier', href: '/#contact' },
+            { label: 'Intégrations & API', href: '/#contact' },
+            { label: 'Maintenance & évolutions', href: '/#contact' },
           ],
         },
       ],
@@ -79,7 +115,6 @@ const NAV: NavItem[] = [
   {
     id: 'realisations',
     label: 'Réalisations',
-    href: '/#realisations',
     panel: {
       note: 'Des projets concrets, des résultats mesurables.',
       cta: { label: 'Voir toutes nos réalisations', href: '/#realisations' },
@@ -139,6 +174,14 @@ function Arrow() {
   )
 }
 
+function Caret({ dir }: { dir: 'left' | 'right' }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      {dir === 'left' ? <path d="m15 18-6-6 6-6" /> : <path d="m9 18 6-6-6-6" />}
+    </svg>
+  )
+}
+
 function Dot() {
   return <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-primary-50 text-primary">
     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
@@ -160,7 +203,6 @@ function MegaCard({ card, onNavigate }: { card: PanelCard; onNavigate: () => voi
           src={card.image}
           alt={card.imageAlt ?? ''}
           fill
-          unoptimized
           sizes="(max-width: 1024px) 90vw, 560px"
           className="object-cover transition duration-500 group-hover:scale-[1.04]"
         />
@@ -193,7 +235,6 @@ function MegaCard({ card, onNavigate }: { card: PanelCard; onNavigate: () => voi
             src={card.image}
             alt={card.imageAlt ?? ''}
             fill
-            unoptimized
             sizes="(max-width: 1024px) 90vw, 340px"
             className="object-cover transition duration-500 group-hover:scale-[1.04]"
           />
@@ -243,24 +284,102 @@ function MegaCard({ card, onNavigate }: { card: PanelCard; onNavigate: () => voi
 
 /* Full mega panel content for one nav item. */
 function MegaPanel({ panel, onNavigate }: { panel: Panel; onNavigate: () => void }) {
+  const [index, setIndex] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const reduce = useReducedMotion()
   const cols = panel.cards.length >= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'
+  // Last reachable position: the track stops once the final card is in view.
+  const last = Math.max(0, panel.cards.length - PER_VIEW)
+  const sliding = panel.carousel === true && last > 0
+
+  // Steps on its own, wrapping at the end. Keyed on `index`, so arriving by
+  // arrow restarts the delay rather than being cut short by a pending tick.
+  useEffect(() => {
+    if (!sliding || paused || reduce) return
+    const id = setTimeout(() => setIndex((i) => (i >= last ? 0 : i + 1)), AUTOPLAY_MS)
+    return () => clearTimeout(id)
+  }, [index, sliding, paused, reduce, last])
+
   return (
     <div>
-      <div className={`grid gap-4 sm:grid-cols-2 ${cols} lg:h-[340px]`}>
-        {panel.cards.map((card) => (
-          <MegaCard key={card.title} card={card} onNavigate={onNavigate} />
-        ))}
-      </div>
+      {sliding ? (
+        <div
+          // Held still while the pointer is on the cards: a click target that
+          // slides out from under the cursor is worse than a slow reveal.
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          className="overflow-hidden lg:h-[340px]"
+        >
+          <div
+            className="flex gap-4 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none lg:h-full"
+            // Clamped so the last step stops flush right instead of running past
+            // the final card and leaving the peek as dead space.
+            style={{
+              transform: `translateX(calc(-1 * min(${index} * ${STEP}, ${maxOffset(panel.cards.length)})))`,
+            }}
+          >
+            {panel.cards.map((card, i) => {
+              const inView = i >= index && i < index + PER_VIEW
+              return (
+                <div
+                  key={card.title}
+                  // The peeking card is a cue, not a target: dimmed so the crop
+                  // reads as deliberate, and out of the tab order because
+                  // focusing it would scroll the clipping box and leave the
+                  // track misaligned.
+                  ref={(node) => {
+                    if (node) node.inert = !inView
+                  }}
+                  className={`shrink-0 transition-opacity duration-500 lg:h-full ${
+                    inView ? '' : 'opacity-45'
+                  }`}
+                  style={{ width: CARD_W }}
+                >
+                  <MegaCard card={card} onNavigate={onNavigate} />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className={`grid gap-4 sm:grid-cols-2 ${cols} lg:h-[340px]`}>
+          {panel.cards.map((card) => (
+            <MegaCard key={card.title} card={card} onNavigate={onNavigate} />
+          ))}
+        </div>
+      )}
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-soft px-5 py-4">
         <p className="text-sm text-slatebody">{panel.note}</p>
-        <Link
-          href={panel.cta.href}
-          onClick={onNavigate}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-heading text-sm font-bold text-white shadow-float transition hover:bg-primary-700"
-        >
-          {panel.cta.label} <Arrow />
-        </Link>
+        <div className="flex items-center gap-4">
+          {sliding && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIndex((i) => (i <= 0 ? last : i - 1))}
+                aria-label="Solutions précédentes"
+                className="grid h-9 w-9 place-items-center rounded-full border border-slatebody/25 text-navy transition hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                <Caret dir="left" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIndex((i) => (i >= last ? 0 : i + 1))}
+                aria-label="Solutions suivantes"
+                className="grid h-9 w-9 place-items-center rounded-full border border-slatebody/25 text-navy transition hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                <Caret dir="right" />
+              </button>
+            </div>
+          )}
+          <Link
+            href={panel.cta.href}
+            onClick={onNavigate}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 font-heading text-sm font-bold text-white shadow-float transition hover:bg-primary-700"
+          >
+            {panel.cta.label} <Arrow />
+          </Link>
+        </div>
       </div>
     </div>
   )
@@ -279,8 +398,10 @@ export default function Header({
   const reduce = useReducedMotion()
 
   useEffect(() => {
+    // Passive: the handler never calls preventDefault, and a non-passive scroll
+    // listener makes the browser wait on it before compositing each frame.
     const onScroll = () => setScrolled(window.scrollY > 12)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -460,7 +581,6 @@ export default function Header({
                                         src={card.image}
                                         alt={card.imageAlt ?? ''}
                                         fill
-                                        unoptimized
                                         sizes="64px"
                                         className="object-cover"
                                       />

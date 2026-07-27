@@ -6,7 +6,8 @@ import type { ShowcaseContent } from './showcase'
  * Each solution feeds the sections of the page:
  *   hero      → full-screen image hero (image slot: src null → brand fallback)
  *   video     → full-screen video section right after the hero
- *   scenarios → the Secteurs carousel (4 slides)
+ *   scenarios → the Secteurs carousel (4 slides) — omit it and the section is
+ *               dropped from the page altogether
  *   showcase  → the media Showcase grid (5 cards)
  * Media are placeholder slots (image src: null, video sources: []) until real
  * assets are added.
@@ -38,7 +39,7 @@ export type Solution = {
   metaDescription: string
   hero: SolutionHeroContent
   video: SolutionVideoContent
-  scenarios: readonly Secteur[]
+  scenarios?: readonly Secteur[]
   showcase: ShowcaseContent
 }
 
@@ -183,7 +184,68 @@ const altospos: Solution = {
   },
 }
 
-export const solutions: readonly Solution[] = [altospos]
+const altosstock: Solution = {
+  slug: 'altosstock',
+  name: 'AltosStock',
+  metaDescription:
+    'AltosStock — la gestion de stock connectée à AltosPOS : inventaire en temps réel, fiche technique par article, suivi des mouvements, gestion des fournisseurs, états de réapprovisionnement et reporting.',
+
+  hero: {
+    eyebrow: 'Solution AltosStock',
+    title: 'Votre stock, juste à chaque instant.',
+    subtitle:
+      'Inventaire en temps réel, fiches techniques, suivi des mouvements et réapprovisionnement — chaque vente encaissée met les quantités à jour.',
+    note:
+      'Connecté nativement à AltosPOS : un seul catalogue, un seul stock, aucune double saisie.',
+    image: {
+      src: '/Template/p3-3-2.jpg.jpeg',
+      alt: 'Employée consultant le stock d’un article sur son terminal, en rayon',
+    },
+  },
+
+  video: {
+    sources: ['/Template/AltosStock.mp4'],
+    alt: 'Présentation d’AltosStock en fonctionnement',
+  },
+
+  showcase: {
+    eyebrow: 'Fonctionnalités',
+    title: 'De la réception à l’inventaire, tout votre stock au même endroit.',
+    cards: [
+      {
+        media: { kind: 'image', src: null, alt: 'Visuel à venir — vue d’ensemble du stock' },
+        title: 'Un stock à jour à la seconde, sans comptage manuel.',
+        align: 'bottom-left',
+      },
+      {
+        media: { kind: 'image', src: null, alt: 'Visuel à venir — seuils et alertes' },
+        title: 'Seuils d’alerte et état de réapprovisionnement',
+        align: 'top-center',
+      },
+      {
+        media: { kind: 'image', src: null, alt: 'Visuel à venir — gestion des fournisseurs' },
+        title: 'Fournisseurs',
+        body: 'Prix, délais et historique des commandes par fournisseur — pour acheter au bon moment et au bon prix.',
+        align: 'bottom-center',
+      },
+      {
+        media: { kind: 'image', src: null, alt: 'Visuel à venir — reporting de stock' },
+        title: 'Reporting : valorisation, rotation et écarts.',
+        body: 'Valeur du stock, articles dormants, produits en rupture — par point de vente ou pour tout l’établissement.',
+        note: '*Export des données vers vos systèmes de gestion et de comptabilité.',
+        align: 'top-left',
+      },
+      {
+        media: { kind: 'image', src: null, alt: 'Visuel à venir — intégration AltosPOS' },
+        title: 'Connecté à AltosPOS',
+        note: '*Chaque vente encaissée déduit le stock, sans intervention.',
+        align: 'bottom-left',
+      },
+    ],
+  },
+}
+
+export const solutions: readonly Solution[] = [altospos, altosstock]
 
 export function getSolution(slug: string): Solution | undefined {
   return solutions.find((s) => s.slug === slug)

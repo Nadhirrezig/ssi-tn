@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useReducedMotion } from 'framer-motion'
 import Reveal from '@/components/motion/Reveal'
@@ -23,6 +23,16 @@ import {
 // Intended asset size per slot of the 1400-wide composition (20px gutters).
 const RATIOS = ['1400 × 720', '690 × 690', '690 × 690', '950 × 700', '430 × 700'] as const
 
+// Rendered width of each slot inside the 1200px container, so next/image stops
+// serving a full-width source to the half- and quarter-width cards.
+const SIZES = [
+  '(max-width: 1024px) 100vw, 1200px',
+  '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 590px',
+  '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 590px',
+  '(max-width: 1024px) 100vw, 800px',
+  '(max-width: 1024px) 100vw, 380px',
+] as const
+
 /** Empty state: subtle inset border + centered mono label. No box, no icon. */
 function Placeholder({ media, ratio }: { media: ShowcaseMedia; ratio: string }) {
   return (
@@ -43,6 +53,23 @@ function VideoMedia({ media }: { media: Extract<ShowcaseMedia, { kind: 'video' }
   const ref = useRef<HTMLVideoElement>(null)
   const reduce = useReducedMotion()
 
+  // The card sits deep in the page, so the clip is neither fetched nor decoded
+  // until it is about to be seen — `autoPlay` pulls it down on page load
+  // instead, and a loop left running off-screen keeps decoding for nothing.
+  useEffect(() => {
+    const video = ref.current
+    if (!video || reduce) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) void video.play()
+        else video.pause()
+      },
+      { rootMargin: '200px' }
+    )
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [reduce])
+
   const replay = () => {
     const v = ref.current
     if (!v) return
@@ -60,8 +87,7 @@ function VideoMedia({ media }: { media: Extract<ShowcaseMedia, { kind: 'video' }
         muted
         loop
         playsInline
-        autoPlay={!reduce}
-        preload="metadata"
+        preload="none"
         className="absolute inset-0 h-full w-full object-cover"
       />
       <button
@@ -111,11 +137,14 @@ const ALIGN: Record<ShowcaseCard['align'], { box: string; scrim: string }> = {
 function Card({
   card,
   ratio,
+  sizes,
   className,
   large,
 }: {
   card: ShowcaseCard
   ratio: string
+  /** Rendered width of this slot, so the browser picks the right source. */
+  sizes: string
   className?: string
   /** Larger inside-title (the full-width hero card). */
   large?: boolean
@@ -133,7 +162,7 @@ function Card({
           src={card.media.src as string}
           alt={card.media.alt}
           fill
-          sizes="(max-width: 1024px) 100vw, 1200px"
+          sizes={sizes}
           className="object-cover"
         />
       ) : (
@@ -207,6 +236,7 @@ export default function Showcase({
             <Card
               card={hero}
               ratio={RATIOS[0]}
+              sizes={SIZES[0]}
               large
               className="aspect-[4/3] sm:aspect-[16/9] lg:aspect-[1400/720]"
             />
@@ -215,16 +245,16 @@ export default function Showcase({
           {/* Row 2 — two equal split cards */}
           <Reveal>
             <div className="grid gap-5 sm:grid-cols-2">
-              <Card card={splitLeft} ratio={RATIOS[1]} className="aspect-[4/3] sm:aspect-square" />
-              <Card card={splitRight} ratio={RATIOS[2]} className="aspect-[4/3] sm:aspect-square" />
+              <Card card={splitLeft} ratio={RATIOS[1]} sizes={SIZES[1]} className="aspect-[4/3] sm:aspect-square" />
+              <Card card={splitRight} ratio={RATIOS[2]} sizes={SIZES[2]} className="aspect-[4/3] sm:aspect-square" />
             </div>
           </Reveal>
 
           {/* Row 3 — wide (~70%) + narrow (~30%) */}
           <Reveal>
             <div className="grid gap-5 lg:grid-cols-[950fr_430fr]">
-              <Card card={wide} ratio={RATIOS[3]} className="aspect-[4/3] lg:aspect-[950/700]" />
-              <Card card={narrow} ratio={RATIOS[4]} className="aspect-[4/3] lg:aspect-auto lg:h-full" />
+              <Card card={wide} ratio={RATIOS[3]} sizes={SIZES[3]} className="aspect-[4/3] lg:aspect-[950/700]" />
+              <Card card={narrow} ratio={RATIOS[4]} sizes={SIZES[4]} className="aspect-[4/3] lg:aspect-auto lg:h-full" />
             </div>
           </Reveal>
         </div>

@@ -11,14 +11,21 @@ const EASE = [0.22, 1, 0.36, 1] as const
 const HERO_RATIO = '868 × 680'
 const SUPPORT_RATIO = '513 × 330'
 
+// Rendered width of each cell, so the support column stops pulling a source
+// sized for the hero cell.
+const HERO_SIZES = '(max-width: 1024px) 100vw, 870px'
+const SUPPORT_SIZES = '(max-width: 1024px) 45vw, 515px'
+
 /** A single mosaic cell: image when `src` is set, otherwise the empty state. */
 function Figure({
   cell,
   ratio,
+  sizes,
   className,
 }: {
   cell: SecteurCell
   ratio: string
+  sizes: string
   className?: string
 }) {
   if (cell.src) {
@@ -28,7 +35,7 @@ function Figure({
           src={cell.src}
           alt={cell.alt}
           fill
-          sizes="(max-width: 1024px) 100vw, 1000px"
+          sizes={sizes}
           className="object-cover"
         />
       </figure>
@@ -94,10 +101,17 @@ export default function Secteurs({
     >
       <div className="mx-auto max-w-content px-6">
         {/* Mosaic — aspect-locked so it reserves space (zero CLS). Slides are
-            stacked and cross-fade; inactive slides are inert. */}
+            stacked and cross-fade; inactive slides are inert.
+
+            Every slide occupies the same box, so the browser counts all of them
+            as on-screen and lazy-loading buys nothing: the images of all four
+            slides would download at once. Only the current slide and its
+            neighbours are mounted — a slide reached by a jump of two or more
+            loads as it is selected. */}
         <div className="relative aspect-[4/5] w-full sm:aspect-[16/11] lg:aspect-[1400/680]">
           {items.map((s, i) => {
             const on = i === index
+            const near = Math.abs(i - index) <= 1
             return (
               <div
                 key={i}
@@ -112,17 +126,28 @@ export default function Secteurs({
                   on ? 'opacity-100' : 'pointer-events-none opacity-0'
                 }`}
               >
-                <Figure
-                  cell={s.hero}
-                  ratio={HERO_RATIO}
-                  className={s.support.length > 0 ? 'flex-[1.6] lg:flex-[868]' : 'flex-1'}
-                />
-                {s.support.length > 0 && (
-                  <div className="flex flex-1 gap-3 lg:flex-[513] lg:flex-col lg:gap-5">
-                    {s.support.map((cell, j) => (
-                      <Figure key={j} cell={cell} ratio={SUPPORT_RATIO} className="flex-1" />
-                    ))}
-                  </div>
+                {near && (
+                  <>
+                    <Figure
+                      cell={s.hero}
+                      ratio={HERO_RATIO}
+                      sizes={HERO_SIZES}
+                      className={s.support.length > 0 ? 'flex-[1.6] lg:flex-[868]' : 'flex-1'}
+                    />
+                    {s.support.length > 0 && (
+                      <div className="flex flex-1 gap-3 lg:flex-[513] lg:flex-col lg:gap-5">
+                        {s.support.map((cell, j) => (
+                          <Figure
+                            key={j}
+                            cell={cell}
+                            ratio={SUPPORT_RATIO}
+                            sizes={SUPPORT_SIZES}
+                            className="flex-1"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )

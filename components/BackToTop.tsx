@@ -8,8 +8,10 @@ export default function BackToTop() {
   const reduce = useReducedMotion()
 
   useEffect(() => {
+    // Passive: the handler never calls preventDefault, and a non-passive scroll
+    // listener makes the browser wait on it before compositing each frame.
     const onScroll = () => setVisible(window.scrollY > 500)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])

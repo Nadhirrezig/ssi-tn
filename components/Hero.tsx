@@ -103,7 +103,6 @@ export default function Hero() {
                 alt="Collaboratrice SSI souriante travaillant sur son ordinateur portable"
                 fill
                 priority
-                unoptimized
                 sizes="(max-width: 1024px) 90vw, 760px"
                 className="object-contain object-bottom"
               />
