@@ -8,7 +8,8 @@ import type { ShowcaseContent } from './showcase'
  *   video     → full-screen video section right after the hero
  *   scenarios → the Secteurs carousel (4 slides)
  *   showcase  → the media Showcase grid (5 cards)
- * Media are placeholder slots (src: null) until real assets are added.
+ * Media are placeholder slots (image src: null, video sources: []) until real
+ * assets are added.
  */
 
 export type SolutionHeroContent = {
@@ -21,7 +22,11 @@ export type SolutionHeroContent = {
 }
 
 export type SolutionVideoContent = {
-  src: string | null
+  /**
+   * Parts of the presentation, in playback order. They are played back-to-back
+   * so the section reads as one continuous video. Empty → placeholder slot.
+   */
+  sources: readonly string[]
   poster?: string
   /** Accessible label for the video. */
   alt: string
@@ -57,7 +62,13 @@ const altospos: Solution = {
   },
 
   video: {
-    src: '/Template/AltosPOS.mp4',
+    // Split into three parts to keep each file shippable; SolutionVideo plays
+    // them back-to-back as one continuous video.
+    sources: [
+      '/Template/altosPOS-vid-1.mp4',
+      '/Template/altosPOS-vid-2.mp4',
+      '/Template/altosPOS-vid-3.mp4',
+    ],
     alt: 'Présentation d’AltosPOS en fonctionnement',
   },
 

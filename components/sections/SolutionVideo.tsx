@@ -1,43 +1,79 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import type { SolutionVideoContent } from '@/lib/content/solutions'
 
 /**
- * Full-screen video section shown right after the solution hero. The video
- * plays muted in a loop (autoplay disabled under prefers-reduced-motion) with
- * a replay control. While the slot is empty (src: null) a brand gradient
+ * Full-screen video section shown right after the solution hero.
+ *
+ * The presentation ships as several files rather than one, so the parts are
+ * stacked and played back-to-back to read as a single continuous video: when a
+ * part ends the next one is revealed and started, and the last wraps back to
+ * the first. Only the current and next parts are preloaded, so the browser
+ * never pulls every part at once.
+ *
+ * Autoplay is disabled under prefers-reduced-motion; the replay control returns
+ * to the first part. While the slot is empty (sources: []) a brand gradient
  * fills the frame, with the usual mono slot label.
  */
 export default function SolutionVideo({ content }: { content: SolutionVideoContent }) {
-  const ref = useRef<HTMLVideoElement>(null)
+  const refs = useRef<(HTMLVideoElement | null)[]>([])
   const reduce = useReducedMotion()
-  const filled = content.src !== null
+  const [active, setActive] = useState(0)
+
+  const { sources } = content
+  const filled = sources.length > 0
+  const next = filled ? (active + 1) % sources.length : 0
+
+  // Drives playback whenever the active part changes, including the first one.
+  useEffect(() => {
+    if (!filled || reduce) return
+    const video = refs.current[active]
+    if (!video) return
+    video.currentTime = 0
+    void video.play()
+  }, [active, filled, reduce])
 
   const replay = () => {
-    const v = ref.current
-    if (!v) return
-    v.currentTime = 0
-    void v.play()
+    const current = refs.current[active]
+    if (current) {
+      current.pause()
+      current.currentTime = 0
+    }
+    const first = refs.current[0]
+    if (first) {
+      first.currentTime = 0
+      void first.play()
+    }
+    setActive(0)
   }
 
   return (
     <section aria-label={content.alt} className="relative h-screen w-full overflow-hidden bg-navy">
       {filled ? (
         <>
-          <video
-            ref={ref}
-            src={content.src as string}
-            poster={content.poster}
-            aria-label={content.alt}
-            muted
-            loop
-            playsInline
-            autoPlay={!reduce}
-            preload="metadata"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+          {sources.map((src, index) => (
+            <video
+              key={src}
+              ref={(el) => {
+                refs.current[index] = el
+              }}
+              src={src}
+              poster={index === 0 ? content.poster : undefined}
+              aria-label={content.alt}
+              aria-hidden={index !== active}
+              muted
+              playsInline
+              // Buffer the next part while this one plays so the hand-off does
+              // not stall; the rest stay unfetched.
+              preload={index === active || index === next ? 'auto' : 'none'}
+              onEnded={() => setActive((index + 1) % sources.length)}
+              className={`absolute inset-0 h-full w-full object-cover ${
+                index === active ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          ))}
           <button
             type="button"
             onClick={replay}
