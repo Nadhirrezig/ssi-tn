@@ -59,8 +59,8 @@ export function Footer() {
             <Eyebrow>Contact</Eyebrow>
             <ul className="mt-[var(--space-2)] flex flex-col gap-[var(--space-1)]">
               <li>
-                <a href="mailto:contact@ssi.tn" className={linkClass}>
-                  contact@ssi.tn
+                <a href="mailto:contact@ssi-tn.com" className={linkClass}>
+                  contact@ssi-tn.com
                 </a>
               </li>
               <li>

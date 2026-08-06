@@ -37,14 +37,14 @@ export function ContactCTA() {
           </p>
 
           <div className="mt-[var(--space-5)] flex flex-col gap-[var(--space-2)] sm:flex-row sm:items-center sm:gap-[var(--space-4)]">
-            <Button href="mailto:contact@ssi.tn" variant="primary">
+            <Button href="mailto:contact@ssi-tn.com" variant="primary">
               Écrire à SSI
             </Button>
             <a
-              href="mailto:contact@ssi.tn"
+              href="mailto:contact@ssi-tn.com"
               className="font-mono text-[length:var(--text-mono)] text-muted link-underline link-underline-grow self-start sm:self-auto"
             >
-              contact@ssi.tn
+              contact@ssi-tn.com
             </a>
           </div>
         </div>

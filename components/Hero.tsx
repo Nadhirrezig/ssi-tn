@@ -29,13 +29,6 @@ export default function Hero() {
           animate="show"
           className="relative z-10 py-14 lg:py-24"
         >
-          <motion.span
-            variants={item}
-            className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-1.5 font-heading text-sm font-bold text-primary"
-          >
-            <span className="h-2 w-2 rounded-full bg-primary" />
-            Sécurité &amp; Solutions Informatiques
-          </motion.span>
 
           <motion.h1
             variants={item}

@@ -22,7 +22,7 @@ export default function CTABand() {
               </p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                 <a
-                  href="mailto:contact@ssi.tn?subject=Demande%20de%20devis"
+                  href="mailto:contact@ssi-tn.com?subject=Demande%20de%20devis"
                   className="rounded-full bg-white px-9 py-4 font-heading text-base font-bold text-primary transition hover:bg-accentYellow hover:text-navy"
                 >
                   Demander un devis gratuit
@@ -36,18 +36,18 @@ export default function CTABand() {
               </div>
 
               <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-white/80">
-                <a href="tel:+21671000000" className="inline-flex items-center gap-2 transition hover:text-white">
+                <a href="tel:+21628290350" className="inline-flex items-center gap-2 transition hover:text-white">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" />
                   </svg>
-                  +216 71 000 000
+                  +216 28 290 350
                 </a>
-                <a href="mailto:contact@ssi.tn" className="inline-flex items-center gap-2 transition hover:text-white">
+                <a href="mailto:contact@ssi-tn.com" className="inline-flex items-center gap-2 transition hover:text-white">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="5" width="18" height="14" rx="2" />
                     <path d="m3 7 9 6 9-6" />
                   </svg>
-                  contact@ssi.tn
+                  contact@ssi-tn.com
                 </a>
               </div>
             </div>

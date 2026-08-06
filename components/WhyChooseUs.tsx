@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import NavPanelTrigger from './NavPanelTrigger'
 import Reveal from './motion/Reveal'
 
 const points = [
@@ -92,8 +92,10 @@ export default function WhyChooseUs() {
             ))}
           </ul>
 
-          <Link
-            href="#realisations"
+          {/* There is no réalisations page yet — the panel is where the real
+              destinations live, so the CTA opens it rather than dead-ending. */}
+          <NavPanelTrigger
+            panel="solutions"
             className="group mt-10 inline-flex items-center gap-5"
           >
             <span className="grid h-14 w-14 place-items-center rounded-full bg-primary text-white shadow-float transition group-hover:scale-105">
@@ -104,7 +106,7 @@ export default function WhyChooseUs() {
             <span className="font-heading text-sm font-bold uppercase tracking-[0.12em] text-navy">
               Voir nos réalisations
             </span>
-          </Link>
+          </NavPanelTrigger>
         </Reveal>
       </div>
     </section>

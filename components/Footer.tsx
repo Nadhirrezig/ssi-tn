@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Logo from './Logo'
+import { CookiePreferencesButton } from './CookieConsent'
 
 export default function Footer() {
   return (
@@ -24,7 +25,7 @@ export default function Footer() {
                   <path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z" />
                 </svg>
               </SocialLink>
-              <SocialLink aria-label="Email" href="mailto:contact@ssi.tn">
+              <SocialLink aria-label="Email" href="mailto:contact@ssi-tn.com">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="5" width="18" height="14" rx="2" />
                   <path d="m3 7 9 6 9-6" />
@@ -66,20 +67,20 @@ export default function Footer() {
                 Tunis, Tunisie
               </li>
               <li>
-                <a href="tel:+21671000000" className="inline-flex items-center gap-3 transition hover:text-primary">
+                <a href="tel:+21628290350" className="inline-flex items-center gap-3 transition hover:text-primary">
                   <svg className="shrink-0 text-primary" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" />
                   </svg>
-                  +216 71 000 000
+                  +216 28 290 350
                 </a>
               </li>
               <li>
-                <a href="mailto:contact@ssi.tn" className="inline-flex items-center gap-3 transition hover:text-primary">
+                <a href="mailto:contact@ssi-tn.com" className="inline-flex items-center gap-3 transition hover:text-primary">
                   <svg className="shrink-0 text-primary" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="5" width="18" height="14" rx="2" />
                     <path d="m3 7 9 6 9-6" />
                   </svg>
-                  contact@ssi.tn
+                  contact@ssi-tn.com
                 </a>
               </li>
             </ul>
@@ -90,7 +91,16 @@ export default function Footer() {
           <p className="text-sm text-slatebody">
             © 2026 SSI — Sécurité &amp; Solutions Informatiques. Tous droits réservés.
           </p>
-          <p className="text-sm text-slatebody">Conçu en Tunisie.</p>
+          <nav
+            aria-label="Liens légaux"
+            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slatebody"
+          >
+            <Link href="/confidentialite" className="transition hover:text-primary">
+              Politique de confidentialité
+            </Link>
+            <CookiePreferencesButton className="transition hover:text-primary" />
+            <span>Conçu en Tunisie.</span>
+          </nav>
         </div>
       </div>
     </footer>

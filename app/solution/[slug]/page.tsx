@@ -22,7 +22,13 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: solution.name,
     description: solution.metaDescription,
-    openGraph: { title: `${solution.name} | SSI`, description: solution.metaDescription },
+    alternates: { canonical: `/solution/${solution.slug}` },
+    openGraph: {
+      title: `${solution.name} | SSI`,
+      description: solution.metaDescription,
+      url: `/solution/${solution.slug}`,
+      type: 'website',
+    },
   }
 }
 

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Logo from './Logo'
+import { NavPanelId, OPEN_PANEL_EVENT } from '@/lib/nav'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -76,7 +77,7 @@ const NAV: NavItem[] = [
           title: 'Paiement et accès par bracelet NFC',
           desc: 'Un simple bracelet permet de payer, commander et ouvrir les chambres. Tout est instantané, sans cash, sans carte, sans friction.',
           href: '/solution/altospos',
-          image: '/Template/p4-1-4.jpg.jpeg',
+          image: '/api/r2/pos-solution/p4-1-4.webp',
           imageAlt: 'Bracelet NFC AltosPOS présenté au-dessus d’un terminal de paiement',
           cta: 'Voir la solution',
           hook: true,
@@ -86,7 +87,7 @@ const NAV: NavItem[] = [
           title: 'Gestion de stock',
           desc: 'Inventaire, suivi des mouvements et réapprovisionnement, synchronisés avec AltosPOS.',
           href: '/solution/altosstock',
-          image: '/Template/stockxpos.jpg',
+          image: '/api/r2/pos-solution/stockxpos.webp',
           imageAlt: 'AltosStock connecté à AltosPOS sur le poste de vente',
           links: [
             { label: 'Inventaire & suivi de stock', href: '/solution/altosstock' },
@@ -412,6 +413,20 @@ export default function Header({
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  // A CTA elsewhere on the page can ask for a panel (see lib/nav). The header is
+  // fixed, so the panel opens in view wherever the visitor happens to be —
+  // below lg that panel is the mobile accordion, hence both states are set.
+  useEffect(() => {
+    const onOpenPanel = (e: Event) => {
+      const panel = (e as CustomEvent<NavPanelId>).detail
+      setActive(panel)
+      setMobileOpen(true)
+      setMobileExpanded(panel)
+    }
+    window.addEventListener(OPEN_PANEL_EVENT, onOpenPanel)
+    return () => window.removeEventListener(OPEN_PANEL_EVENT, onOpenPanel)
+  }, [])
+
   const activeItem = NAV.find((n) => n.id === active) ?? null
   // Chrome (phone + button styling) follows scroll or the page-level override;
   // the bar itself also turns white while a mega panel is open.
@@ -473,7 +488,7 @@ export default function Header({
           {/* Right actions */}
           <div className="flex items-center gap-4">
             <a
-              href="tel:+21671000000"
+              href="tel:+21628290350"
               className={`hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary ${
                 chrome ? 'xl:flex' : ''
               }`}
@@ -481,7 +496,7 @@ export default function Header({
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z" />
               </svg>
-              +216 71 000 000
+              +216 28 290 350
             </a>
             <Link
               href="/#contact"

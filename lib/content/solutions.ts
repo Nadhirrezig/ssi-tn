@@ -57,7 +57,7 @@ const altospos: Solution = {
     note:
       'Accès multi-plateforme : application mobile pour le terrain, interface web pour le pilotage et les analyses, application desktop pour les postes fixes.',
     image: {
-      src: '/Template/p1-bg.jpg.jpeg',
+      src: '/api/r2/pos-solution/p1-bg.webp',
       alt: 'Terminaux AltosPOS — tablette avec imprimante intégrée et borne de comptoir',
     },
   },
@@ -78,12 +78,12 @@ const altospos: Solution = {
       title: 'Gestion des points de vente',
       body: 'Pilotez plusieurs points de vente au sein d’un même établissement : toutes les transactions sont centralisées et synchronisées en temps réel entre les terminaux.',
       hero: {
-        src: '/Template/p18-1.jpg.jpeg',
+        src: '/api/r2/pos-solution/p18-1.webp',
         alt: 'Terminaux AltosPOS synchronisés entre eux et pilotés depuis un poste central',
       },
       support: [
         {
-          src: '/Template/p18-2.jpg.jpeg',
+          src: '/api/r2/pos-solution/p18-2.webp',
           alt: 'Gestion centralisée des terminaux depuis l’interface web, sur tous les appareils',
         },
       ],
@@ -92,20 +92,20 @@ const altospos: Solution = {
       title: 'Prise de commande mobile',
       body: 'Le personnel prend les commandes directement sur site — table, piscine, plage — avec transmission instantanée vers les postes de préparation et le POS. Moins de délais, moins d’erreurs.',
       hero: {
-        src: '/Template/p3-1-1.jpg.jpeg',
+        src: '/api/r2/pos-solution/p3-1-1.webp',
         alt: 'Serveur consultant un terminal mobile AltosPOS en salle de restaurant',
       },
       support: [
         {
-          src: '/Template/p3-2-1.jpg.jpeg',
+          src: '/api/r2/pos-solution/p3-2-1.webp',
           alt: 'Vendeuse présentant le terminal mobile à une cliente en boutique',
         },
         {
-          src: '/Template/p3-2-2.jpg.jpeg',
+          src: '/api/r2/pos-solution/p3-2-2.webp',
           alt: 'Prise de commande sur le terminal mobile au comptoir d’une bijouterie',
         },
         {
-          src: '/Template/p3-2-3.jpg.jpeg',
+          src: '/api/r2/pos-solution/p3-2-3.webp',
           alt: 'Catalogue produits parcouru du bout du doigt sur le terminal mobile',
         },
       ],
@@ -114,16 +114,16 @@ const altospos: Solution = {
       title: 'Paiement sans contact NFC',
       body: 'Via AltosTap, bracelets et cartes NFC identifient le client instantanément et encaissent la transaction en un seul geste, en intégration complète avec le système.',
       hero: {
-        src: '/Template/p4-1-1.jpg.jpeg',
+        src: '/api/r2/pos-solution/p4-1-1.webp',
         alt: 'Terminal AltosPOS sur le comptoir d’un café, écran d’encaissement affiché',
       },
       support: [
         {
-          src: '/Template/p4-1-2.jpg.jpeg',
+          src: '/api/r2/pos-solution/p4-1-2.webp',
           alt: 'Écran d’accueil du terminal AltosPOS avec ses applications',
         },
         {
-          src: '/Template/p4-1-4.jpg.jpeg',
+          src: '/api/r2/pos-solution/p4-1-4.webp',
           alt: 'Lecteur de carte du terminal — paiement par carte bancaire',
         },
       ],
@@ -132,12 +132,12 @@ const altospos: Solution = {
       title: 'Gestion des accès',
       body: 'AltosTap unifie l’identification du client dans tout l’établissement : ouverture des chambres via NFC, accès et interactions sécurisés de bout en bout.',
       hero: {
-        src: '/Template/p3-3-1.jpg.jpeg',
+        src: '/api/r2/pos-solution/p3-3-1.webp',
         alt: 'Employée encaissant un client avec le terminal portable en magasin',
       },
       support: [
         {
-          src: '/Template/p3-3-2.jpg.jpeg',
+          src: '/api/r2/pos-solution/p3-3-2.webp',
           alt: 'Scan d’un article sur le terminal portable dans les rayons',
         },
       ],
@@ -149,19 +149,19 @@ const altospos: Solution = {
     title: 'Des commandes au reporting, tout est connecté.',
     cards: [
       {
-        media: { kind: 'image', src: '/Template/p4-2-4.jpg.jpeg', alt: 'Visuel à venir — gestion des commandes' },
+        media: { kind: 'image', src: '/api/r2/pos-solution/p4-2-4.webp', alt: 'Visuel à venir — gestion des commandes' },
         title: 'Des commandes suivies automatiquement, sans ticket papier.',
         body: 'Statuts mis à jour en temps réel, suivi automatique de chaque commande — fini les pertes et les doublons.',
         align: 'bottom-left',
       },
       {
-        media: { kind: 'image', src: '/Template/rapporting.png', alt: 'Visuel à venir — analyse et reporting' },
+        media: { kind: 'image', src: '/api/r2/pos-solution/rapporting.webp', alt: 'Visuel à venir — analyse et reporting' },
         title: 'Analyse et reporting : vos ventes en temps réel',
         body: 'Par employé, point de vente ou produit — avec rapports de fin de journée générés automatiquement.',
         align: 'top-center',
       },
       {
-        media: { kind: 'image', src: '/Template/v3plus-mix2.jpg', alt: 'Visuel à venir — application mobile AltosPOS' },
+        media: { kind: 'image', src: '/api/r2/pos-solution/v3plus-mix2.webp', alt: 'Visuel à venir — application mobile AltosPOS' },
         title: 'AltosPOS mobile : application dédiée et interface pratique',
         body: 'Application mobile handy avec interface dédiée pour gérer catalogue, prix et commandes en déplacement.',
         align: 'bottom-center',
@@ -174,7 +174,7 @@ const altospos: Solution = {
         align: 'top-left',
       },
       {
-        media: { kind: 'image', src: '/Template/stockxpos.jpg', alt: 'Vidéo à venir — intégration AltosInventaire' },
+        media: { kind: 'image', src: '/api/r2/pos-solution/stockxpos.webp', alt: 'Vidéo à venir — intégration AltosInventaire' },
         title: 'Intégré nativement à AltosInventaire.',
         body: '',
         note: '*Export des données vers vos systèmes de gestion et de comptabilité.',
@@ -198,7 +198,7 @@ const altosstock: Solution = {
     note:
       'Connecté nativement à AltosPOS : un seul catalogue, un seul stock, aucune double saisie.',
     image: {
-      src: '/Template/p3-3-2.jpg.jpeg',
+      src: '/api/r2/pos-solution/p3-3-2.webp',
       alt: 'Employée consultant le stock d’un article sur son terminal, en rayon',
     },
   },
