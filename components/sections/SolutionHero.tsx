@@ -12,7 +12,11 @@ export default function SolutionHero({ content }: { content: SolutionHeroContent
   const filled = content.image.src !== null
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-navy">
+    // `svh` rather than `vh`: on a phone the latter measures the viewport with
+    // the browser chrome retracted, so the section overflows the screen it is
+    // meant to fill. The vertical padding is what the copy falls back on when it
+    // outgrows that height — without it a long title runs under the fixed header.
+    <section className="relative flex min-h-svh items-center justify-center overflow-hidden bg-navy py-28 sm:py-32">
       {/* Media layer */}
       {filled ? (
         <Image
@@ -20,7 +24,13 @@ export default function SolutionHero({ content }: { content: SolutionHeroContent
           alt={content.image.alt}
           fill
           priority
-          sizes="100vw"
+          // The frame is portrait on a phone and the photography is landscape,
+          // so `object-cover` scales the source to the frame's *height* — it is
+          // painted about twice as wide as the viewport. At a flat `100vw` the
+          // browser picks a source for one viewport width and upscales it, which
+          // is what makes the hero look soft on mobile. 150vw buys back most of
+          // that without reaching for the 4K source on a high-DPR phone.
+          sizes="(max-width: 768px) 150vw, 100vw"
           className="object-cover"
         />
       ) : (
@@ -49,31 +59,33 @@ export default function SolutionHero({ content }: { content: SolutionHeroContent
             {content.eyebrow}
           </p>
 
-          <h1 className="mt-4 font-heading text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-3 text-balance font-heading text-3xl font-bold leading-tight text-white sm:mt-4 sm:text-5xl lg:text-6xl">
             {content.title}
           </h1>
 
-          <p className="mt-6 text-base leading-relaxed text-white/85 sm:text-lg">
+          <p className="mt-5 text-base leading-relaxed text-white/85 sm:mt-6 sm:text-lg">
             {content.subtitle}
           </p>
 
           {content.note && (
-            <p className="mt-4 text-sm text-white/60">
+            <p className="mt-4 text-sm leading-relaxed text-white/60">
               {content.note}
             </p>
           )}
 
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+          {/* Stacked and full-width on a phone: side by side the two labels wrap
+              into two ragged rows of different widths. */}
+          <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
             <Link
               href="/#contact"
-              className="rounded-full bg-primary px-8 py-4 font-heading text-base font-bold text-white shadow-float transition hover:bg-primary-700"
+              className="rounded-full bg-primary px-8 py-4 text-center font-heading text-base font-bold text-white shadow-float transition hover:bg-primary-700"
             >
               Demander une démo
             </Link>
 
             <a
               href="#fonctionnalites"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-7 py-4 font-heading text-base font-bold text-white transition hover:border-white hover:bg-white/10"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-7 py-4 font-heading text-base font-bold text-white transition hover:border-white hover:bg-white/10"
             >
               Découvrir les fonctionnalités
               <svg

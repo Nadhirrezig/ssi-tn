@@ -151,9 +151,17 @@ function Card({
 }) {
   const filled = card.media.src !== null
   const align = ALIGN[card.align]
+  const hasText = Boolean(card.title || card.body || card.note)
 
   return (
-    <article className={`relative overflow-hidden ${className ?? ''}`}>
+    // The card is the flex container itself so the copy stays in normal flow.
+    // Held in an absolute layer it was laid out against a box whose height the
+    // aspect ratio had already fixed, and a title that needed one line more than
+    // the ratio allowed — routine at 375px — was silently cut off by
+    // `overflow-hidden`. In flow the ratio acts as a floor and the card grows.
+    <article
+      className={`relative flex flex-col overflow-hidden ${hasText ? align.box : ''} ${className ?? ''}`}
+    >
       {/* Media layer */}
       {!filled ? (
         <Placeholder media={card.media} ratio={ratio} />
@@ -170,21 +178,21 @@ function Card({
       )}
 
       {/* Text layer (over the media) */}
-      {(card.title || card.body || card.note) && (
-        <div className={`absolute inset-0 flex flex-col ${align.box}`}>
+      {hasText && (
+        <>
           {/* Scrim for contrast — only when real media sits behind the text */}
           {filled && <div aria-hidden className={`absolute inset-0 ${align.scrim}`} />}
           <div
-            className={`relative max-w-xl p-6 sm:p-8 lg:p-10 ${
+            className={`relative max-w-xl p-5 sm:p-8 lg:p-10 ${
               filled ? 'text-white' : 'text-navy'
             }`}
           >
             {card.title && (
               <h3
-                className={`font-heading font-bold ${
+                className={`text-balance font-heading font-bold ${
                   large
-                    ? 'text-2xl leading-snug sm:text-3xl lg:text-4xl'
-                    : 'text-xl leading-snug sm:text-2xl lg:text-[28px]'
+                    ? 'text-xl leading-snug sm:text-3xl lg:text-4xl'
+                    : 'text-lg leading-snug sm:text-2xl lg:text-[28px]'
                 }`}
               >
                 {card.title}
@@ -192,7 +200,7 @@ function Card({
             )}
             {card.body && (
               <p
-                className={`mt-3 text-sm leading-relaxed sm:text-base ${
+                className={`mt-2.5 text-sm leading-relaxed sm:mt-3 sm:text-base ${
                   filled ? 'text-white/85' : 'text-slatebody'
                 }`}
               >
@@ -200,12 +208,16 @@ function Card({
               </p>
             )}
             {card.note && (
-              <p className={`mt-3 text-xs sm:text-sm ${filled ? 'text-white/60' : 'text-slatebody/80'}`}>
+              <p
+                className={`mt-2.5 text-xs sm:mt-3 sm:text-sm ${
+                  filled ? 'text-white/60' : 'text-slatebody/80'
+                }`}
+              >
                 {card.note}
               </p>
             )}
           </div>
-        </div>
+        </>
       )}
     </article>
   )
@@ -220,17 +232,17 @@ export default function Showcase({
   const [hero, splitLeft, splitRight, wide, narrow] = content.cards
 
   return (
-    <section aria-label={content.title} className="bg-white py-24">
+    <section aria-label={content.title} className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-content px-6">
         {/* Heading — outside the grid, like the reference */}
         <Reveal className="max-w-3xl">
-          <p className="font-heading text-base font-bold text-primary">{content.eyebrow}</p>
-          <h2 className="mt-4 font-heading text-3xl font-bold leading-tight text-navy sm:text-4xl lg:text-[44px]">
+          <p className="font-heading text-sm font-bold text-primary sm:text-base">{content.eyebrow}</p>
+          <h2 className="mt-3 text-balance font-heading text-[28px] font-bold leading-tight text-navy sm:mt-4 sm:text-4xl lg:text-[44px]">
             {content.title}
           </h2>
         </Reveal>
 
-        <div className="mt-12 space-y-5">
+        <div className="mt-8 space-y-4 sm:mt-12 sm:space-y-5">
           {/* Row 1 — full-width hero card */}
           <Reveal>
             <Card
@@ -244,7 +256,7 @@ export default function Showcase({
 
           {/* Row 2 — two equal split cards */}
           <Reveal>
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
               <Card card={splitLeft} ratio={RATIOS[1]} sizes={SIZES[1]} className="aspect-[4/3] sm:aspect-square" />
               <Card card={splitRight} ratio={RATIOS[2]} sizes={SIZES[2]} className="aspect-[4/3] sm:aspect-square" />
             </div>
@@ -252,7 +264,7 @@ export default function Showcase({
 
           {/* Row 3 — wide (~70%) + narrow (~30%) */}
           <Reveal>
-            <div className="grid gap-5 lg:grid-cols-[950fr_430fr]">
+            <div className="grid gap-4 sm:gap-5 lg:grid-cols-[950fr_430fr]">
               <Card card={wide} ratio={RATIOS[3]} sizes={SIZES[3]} className="aspect-[4/3] lg:aspect-[950/700]" />
               <Card card={narrow} ratio={RATIOS[4]} sizes={SIZES[4]} className="aspect-[4/3] lg:aspect-auto lg:h-full" />
             </div>

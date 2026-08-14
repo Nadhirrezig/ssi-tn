@@ -95,7 +95,12 @@ export default function SolutionVideo({ content }: { content: SolutionVideoConte
     <section
       ref={sectionRef}
       aria-label={content.alt}
-      className="relative h-screen w-full overflow-hidden bg-navy"
+      // The clip is 16:9 and `object-cover` fills whatever frame it is given, so
+      // a full-screen section on a portrait phone crops it to a vertical sliver
+      // magnified about four times. Below the laptop breakpoint the frame takes
+      // the clip's own ratio instead and nothing is cropped; `svh` keeps the
+      // full-screen frame from growing under the mobile browser chrome.
+      className="relative aspect-video w-full overflow-hidden bg-navy lg:aspect-auto lg:h-svh"
     >
       {filled ? (
         <>
@@ -200,7 +205,7 @@ export default function SolutionVideo({ content }: { content: SolutionVideoConte
             type="button"
             onClick={replay}
             aria-label="Lire la vidéo depuis le début"
-            className="absolute bottom-6 right-6 z-10 grid h-11 w-11 place-items-center rounded-full bg-white/90 text-navy shadow-card backdrop-blur transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="absolute bottom-4 right-4 z-10 grid h-11 w-11 place-items-center rounded-full bg-white/90 text-navy shadow-card backdrop-blur transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
           >
             <svg
               width="18"

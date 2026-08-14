@@ -213,30 +213,52 @@ const altosstock: Solution = {
     title: 'De la réception à l’inventaire, tout votre stock au même endroit.',
     cards: [
       {
-        media: { kind: 'image', src: null, alt: 'Visuel à venir — vue d’ensemble du stock' },
+        media: {
+          kind: 'image',
+          src: '/Template/stock/scan.webp',
+          alt: 'Article scanné au lecteur code-barres en entrepôt, quantités mises à jour sur la tablette',
+        },
         title: 'Un stock à jour à la seconde, sans comptage manuel.',
+        body: 'Réceptions, sorties et transferts sont scannés : les quantités se mettent à jour en temps réel, sur tous vos points de vente.',
         align: 'bottom-left',
       },
       {
-        media: { kind: 'image', src: null, alt: 'Visuel à venir — seuils et alertes' },
+        media: {
+          kind: 'image',
+          src: '/Template/stock/image1.webp',
+          alt: 'Magasinier cochant sa liste d’articles devant des cartons empilés',
+        },
         title: 'Seuils d’alerte et état de réapprovisionnement',
+        body: 'Un seuil par article : les ruptures à venir sont signalées et la liste de ce qu’il faut recommander est prête.',
         align: 'top-center',
       },
       {
-        media: { kind: 'image', src: null, alt: 'Visuel à venir — gestion des fournisseurs' },
+        media: {
+          kind: 'image',
+          src: '/Template/stock/fournisseur.webp',
+          alt: 'Poignée de main entre deux responsables au-dessus des documents d’une commande fournisseur',
+        },
         title: 'Fournisseurs',
         body: 'Prix, délais et historique des commandes par fournisseur — pour acheter au bon moment et au bon prix.',
         align: 'bottom-center',
       },
       {
-        media: { kind: 'image', src: null, alt: 'Visuel à venir — reporting de stock' },
+        media: {
+          kind: 'image',
+          src: '/Template/stock/rapporting-gestion-stock.webp',
+          alt: 'Tableau de bord de gestion de stock consulté sur tablette au milieu des rayonnages',
+        },
         title: 'Reporting : valorisation, rotation et écarts.',
         body: 'Valeur du stock, articles dormants, produits en rupture — par point de vente ou pour tout l’établissement.',
         note: '*Export des données vers vos systèmes de gestion et de comptabilité.',
         align: 'top-left',
       },
       {
-        media: { kind: 'image', src: null, alt: 'Visuel à venir — intégration AltosPOS' },
+        media: {
+          kind: 'image',
+          src: '/Template/stock/transaction.webp',
+          alt: 'Vue d’ensemble d’un entrepôt et de ses mouvements, pilotée depuis une tablette',
+        },
         title: 'Connecté à AltosPOS',
         note: '*Chaque vente encaissée déduit le stock, sans intervention.',
         align: 'bottom-left',

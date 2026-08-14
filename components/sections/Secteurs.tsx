@@ -97,7 +97,7 @@ export default function Secteurs({
     <section
       aria-roledescription="carrousel"
       aria-label={ariaLabel}
-      className="bg-white py-24"
+      className="bg-white py-16 sm:py-20 lg:py-24"
     >
       <div className="mx-auto max-w-content px-6">
         {/* Mosaic — aspect-locked so it reserves space (zero CLS). Slides are
@@ -156,7 +156,7 @@ export default function Secteurs({
 
         {/* Text row: title (left) / body (middle) / controls (right). Stacks
             vertically under 1024px. */}
-        <div className="mt-10 grid gap-8 lg:mt-14 lg:min-h-[128px] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,520px)_auto] lg:items-center lg:gap-10">
+        <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 lg:mt-14 lg:min-h-[128px] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,520px)_auto] lg:items-center lg:gap-10">
           {/* Title */}
           <div className="relative">
             <AnimatePresence mode="popLayout" initial={false}>
@@ -180,7 +180,9 @@ export default function Secteurs({
           </div>
 
           {/* Controls */}
-          <div className="flex items-center gap-6 lg:justify-end">
+          {/* Spread apart on a phone so the dots and the arrows each keep their
+              own side of the row; grouped at the right from the wide layout on. */}
+          <div className="flex items-center justify-between gap-6 lg:justify-end">
             {/* Pagination indicators */}
             <div className="flex items-center gap-2" role="group" aria-label="Choisir un secteur">
               {items.map((s, i) => (
