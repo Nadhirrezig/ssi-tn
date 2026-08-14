@@ -215,7 +215,7 @@ const altosstock: Solution = {
       {
         media: {
           kind: 'image',
-          src: '/Template/stock/scan.webp',
+          src: '/api/r2/stock/scan.webp',
           alt: 'Article scanné au lecteur code-barres en entrepôt, quantités mises à jour sur la tablette',
         },
         title: 'Un stock à jour à la seconde, sans comptage manuel.',
@@ -225,7 +225,7 @@ const altosstock: Solution = {
       {
         media: {
           kind: 'image',
-          src: '/Template/stock/image1.webp',
+          src: '/api/r2/stock/image1.webp',
           alt: 'Magasinier cochant sa liste d’articles devant des cartons empilés',
         },
         title: 'Seuils d’alerte et état de réapprovisionnement',
@@ -235,7 +235,7 @@ const altosstock: Solution = {
       {
         media: {
           kind: 'image',
-          src: '/Template/stock/fournisseur.webp',
+          src: '/api/r2/stock/fournisseur.webp',
           alt: 'Poignée de main entre deux responsables au-dessus des documents d’une commande fournisseur',
         },
         title: 'Fournisseurs',
@@ -245,7 +245,7 @@ const altosstock: Solution = {
       {
         media: {
           kind: 'image',
-          src: '/Template/stock/rapporting-gestion-stock.webp',
+          src: '/api/r2/stock/rapporting-gestion-stock.webp',
           alt: 'Tableau de bord de gestion de stock consulté sur tablette au milieu des rayonnages',
         },
         title: 'Reporting : valorisation, rotation et écarts.',
@@ -256,7 +256,7 @@ const altosstock: Solution = {
       {
         media: {
           kind: 'image',
-          src: '/Template/stock/transaction.webp',
+          src: '/api/r2/stock/transaction.webp',
           alt: 'Vue d’ensemble d’un entrepôt et de ses mouvements, pilotée depuis une tablette',
         },
         title: 'Connecté à AltosPOS',

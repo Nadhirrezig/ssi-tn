@@ -15,7 +15,7 @@ import { presignR2GetUrl } from "@/lib/r2"
 export const runtime = "nodejs"
 
 /** The bucket is not a general file host — only the solution imagery is served. */
-const ALLOWED_PREFIX = "pos-solution/"
+const ALLOWED_PREFIXES = ["pos-solution/", "stock/"]
 const ALLOWED_EXTENSION = /\.(?:jpe?g|png|webp|avif|gif)$/i
 
 /** Objects are content-addressed by name and replaced rather than edited. */
@@ -63,7 +63,7 @@ export async function GET(
   const objectKey = params.key.join("/")
 
   if (
-    !objectKey.startsWith(ALLOWED_PREFIX) ||
+    !ALLOWED_PREFIXES.some((prefix) => objectKey.startsWith(prefix)) ||
     objectKey.includes("..") ||
     !ALLOWED_EXTENSION.test(objectKey)
   ) {
