@@ -1,14 +1,15 @@
 import 'server-only'
 
-import { PrismaNeon } from '@prisma/adapter-neon'
 import { PrismaClient } from '@/lib/generated/prisma/client'
+import { createDriverAdapter } from '@/lib/db-adapter'
 
 /**
  * One Prisma client per server instance.
  *
- * Neon's serverless driver talks to the pooled endpoint over WebSockets, which
- * suits Vercel functions: no TCP connection to hold open between invocations.
- * It uses Node's global WebSocket (Node 22+, pinned in package.json engines).
+ * In production the database is Neon, reached through Neon's serverless
+ * driver over WebSockets — suited to Vercel functions, with no TCP connection
+ * held open between invocations (Node's global WebSocket, Node 22+). A local
+ * Postgres uses the TCP driver instead; see lib/db-adapter.ts.
  *
  * In development the client is parked on globalThis so hot reloads reuse it
  * instead of opening a new pool on every edit.
@@ -23,7 +24,7 @@ function createClient(): PrismaClient {
     // query. The first query will fail loudly instead.
     console.error('[db] DATABASE_URL is not set — database queries will fail.')
   }
-  return new PrismaClient({ adapter: new PrismaNeon({ connectionString }) })
+  return new PrismaClient({ adapter: createDriverAdapter(connectionString) })
 }
 
 export const db = globalForDb.db ?? createClient()

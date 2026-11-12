@@ -28,7 +28,8 @@ export const STATUS_META: Record<TicketStatus, { label: string; description: str
   },
   REJECTED: {
     label: 'Annulé',
-    description: 'Cette demande a été annulée. Le dernier message de notre équipe en précise la raison.',
+    description:
+      'Cette demande a été annulée par notre équipe. Pour toute question, ouvrez une nouvelle demande ou appelez-nous.',
   },
 }
 

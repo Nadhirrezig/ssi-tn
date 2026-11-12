@@ -1,6 +1,6 @@
 # Client tickets — architecture
 
-> Status: Phases 0–2 implemented (Next 16; database, auth, mailer; client portal and public form). Phase 3 (admin) next.
+> Status: Phases 0–3 implemented and tested end to end (local Postgres, production build, 32 automated checks). The full client ↔ team loop works.
 
 ## 1. Scope
 
@@ -111,8 +111,8 @@ Rules:
 | Client | `/espace-client` | List of own tickets + statuses |
 | Client | `/espace-client/tickets/nouveau` | New ticket |
 | Client | `/espace-client/tickets/[ref]` | Thread + reply |
-| Admin | `/admin/tickets` | All submitted tickets, filter by status |
-| Admin | `/admin/tickets/[ref]` | Thread, reply, change status |
+| Admin | `/admin/tickets` | Inbox: views *Ouvertes · Nouvelles · Clôturées · Toutes*, search (reference, client name or email), 25 per page |
+| Admin | `/admin/tickets/[ref]` | Thread, reply with optional status change, status buttons, client card |
 | API | `/api/auth/[...all]` | Better Auth handler |
 
 Access control:
@@ -130,16 +130,27 @@ Patterns taken from established service portals (Jira Service Management, Freshd
 - **Status badges**: one meaning, one colour, everywhere; navy text on a light tint from the existing palette (AA contrast).
 - Files: `components/tickets/*`, `app/espace-client/*`, `app/ticket/page.tsx`.
 
+### Admin UI (Phase 3)
+
+Agent-side patterns (Zendesk, Freshdesk, Gorgias), same theme and components as the client side:
+
+- **Inbox**: a real table (reference, client, request, status, last update) with an "À répondre" marker when the client spoke last or nobody answered yet; stacked rows on phones. The search is a plain GET form, so a search is a shareable URL.
+- **Ticket page**: the same timeline in "admin perspective" (client named, teammates named, the viewer as "Vous", status lines say who changed what), a client card, a status panel, and the details panel.
+- **Status, two ways**: the reply box has *Après envoi : [statut ▾]* (reply + status in one step, one email to the client), and the side panel has buttons for the next step and *Annuler la demande* behind an inline confirmation. Only allowed transitions are offered, and the server checks them again.
+- Admins who open `/espace-client` (header link, post-login default) are sent to `/admin/tickets`.
+- Files: `components/admin/*`, `app/admin/*`, `lib/admin-tickets.ts`.
+
 ## 7. Server Actions
 
 | Action | Who | Effect |
 |---|---|---|
 | `createTicketAction` | Client (verified) | Creates ticket, submitted immediately → email admin |
 | *(Better Auth sign-up + hooks)* | Visitor | Creates account + unsubmitted ticket → verification email; submitted on verification |
-| `replyToTicketAction` | Client (owner) | Adds `TicketMessage` → email admin *(admin side in Phase 3)* |
-| `changeTicketStatus` | Admin | Validates the transition, writes `TicketEvent` → email client *(Phase 3)* |
+| `replyToTicketAction` | Client (owner) | Adds `TicketMessage` → email admin |
+| `adminReplyAction` | Admin | Adds `TicketMessage`, optionally moves the status → one email to the client |
+| `adminStatusAction` | Admin | Moves the status, writes `TicketEvent` → email client |
 
-Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket and per-hour limits are enforced in `lib/tickets.ts` (10 new tickets, 40 replies per user per hour).
+Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket and per-hour limits are enforced in `lib/tickets.ts` (10 new tickets, 40 replies per user per hour). Admin actions live in `app/admin/actions.ts`; `lib/admin-tickets.ts` validates transitions and moves the status only if it is still what the admin saw (`updateMany … where status = from`), so two admins acting at once cannot both win.
 
 ## 8. Emails
 
@@ -158,7 +169,8 @@ Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket 
 
 ## 9. Security
 
-- No public admin sign-up: admin accounts are created by a seed script (`prisma/seed.ts`).
+- No public admin sign-up: team accounts are created by `pnpm admin:create` (see below). Non-admins get a 404 on `/admin`.
+- Clients never see which agent answered: team messages read "Équipe SSI".
 - Clients can only read and reply to their own tickets, enforced in every query.
 - Message length capped (5,000 characters).
 - Better Auth's built-in rate limiting on auth endpoints, stored in the database (`rate_limit` table) so every Vercel instance shares one counter.
@@ -194,6 +206,18 @@ Changing `prisma/schema.prisma` later: `pnpm db:migrate --name <change>` creates
 
 On Vercel: set the variables, and run `pnpm db:deploy` against production before (or as part of) the first deploy.
 
+### Team accounts
+
+```bash
+ADMIN_NAME="Prénom Nom" ADMIN_EMAIL=prenom@ssi-tn.com ADMIN_PASSWORD='12+ caractères' pnpm admin:create
+```
+
+Creates a verified admin, or — for an address that already exists — promotes it, replaces its password and signs out its sessions. It uses the database in `DATABASE_URL` (from the shell or `.env.local`), so point it at production to create production admins.
+
+### Local development without Neon
+
+Any non-Neon `DATABASE_URL` (e.g. `postgresql://postgres:postgres@localhost:5432/ssi_dev`) makes the app use the regular Postgres TCP driver (`lib/db-adapter.ts`); Neon URLs keep Neon's serverless driver. For email, point `SMTP_HOST`/`SMTP_PORT` at a local mail catcher on a port other than 465/587; login is then optional.
+
 ## 11. Build phases
 
 | # | Phase | Output |
@@ -201,7 +225,6 @@ On Vercel: set the variables, and run `pnpm db:deploy` against production before
 | 0 | Upgrade to Next 16 + React 19, remove duplicate configs and the npm lockfile | Clean base |
 | 1 | Foundation: Prisma + Neon schema, Better Auth, `lib/mail.ts`, auth pages, `/espace-client` placeholder | Sign-up / login / verification / reset working |
 | 2 | Client side: `/ticket`, sign-up with draft, dashboard, thread, `proxy.ts`, team notification emails, header link | Clients submit and track tickets |
-| 3 | Admin side: inbox, reply, status change | Full loop |
-| 4 | Email wiring, admin seed, polish | Feature complete |
+| 3 | Admin side: inbox + search, reply with status, status buttons, client emails, `admin:create`, local-Postgres support | Full loop ✅ |
 
-Each phase is tested by the project owner before the next one starts.
+Phase 4 ("email wiring, admin seed") was folded into phases 2–3. Possible next steps: internal team notes, assignment to an agent, attachments, the fixed-choice category select.

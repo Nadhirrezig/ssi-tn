@@ -1,19 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import { clearDraft } from '@/lib/ticket-draft'
 
 export default function SignOutButton() {
+  const router = useRouter()
   const [pending, setPending] = useState(false)
 
   async function signOut() {
     setPending(true)
     clearDraft()
     await authClient.signOut()
-    // Full navigation, not router.push: no cached page from the signed-in
-    // session survives in the client router.
-    window.location.assign('/connexion')
+    // replace: the private page should not be one "back" press away.
+    router.replace('/connexion')
+    router.refresh()
   }
 
   return (

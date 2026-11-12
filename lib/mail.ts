@@ -18,13 +18,15 @@ let transport: Transporter | undefined
  * variable surfaces as a send failure rather than a crash at import time.
  *
  * cPanel mail servers accept implicit TLS on 465 (the default here) and
- * STARTTLS on 587; `secure` follows the port.
+ * STARTTLS on 587; `secure` follows the port. Any other port (a local mail
+ * catcher on 1025, say) is plain SMTP, and SMTP_USER/SMTP_PASS may be left
+ * empty there.
  */
 function getTransport(): Transporter {
   if (transport) return transport
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+  if (!SMTP_HOST) {
     throw new Error(
       'SMTP is not configured — expected SMTP_HOST, SMTP_PORT, SMTP_USER and SMTP_PASS in the environment.'
     )
@@ -35,8 +37,8 @@ function getTransport(): Transporter {
     host: SMTP_HOST,
     port,
     secure: port === 465,
-    requireTLS: port !== 465,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
+    requireTLS: port === 587,
+    auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
     // A serverless function has a hard time limit; fail fast instead of
     // hanging on an unreachable mail server until the platform kills it.
     connectionTimeout: 10_000,

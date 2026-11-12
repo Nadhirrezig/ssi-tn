@@ -81,7 +81,18 @@ export default async function DemandePage({ params, searchParams }: Props) {
             <h2 id="exchanges" className="sr-only">
               Échanges
             </h2>
-            <TicketThread ticket={ticket} clientName={user.name} />
+            <TicketThread
+              perspective="client"
+              viewerId={user.id}
+              request={{
+                body: ticket.message,
+                at: ticket.submittedAt ?? ticket.createdAt,
+                authorId: user.id,
+                authorName: user.name,
+              }}
+              messages={ticket.messages}
+              events={ticket.events}
+            />
 
             <div className="mt-8">
               {final ? (
