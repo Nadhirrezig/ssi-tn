@@ -1,0 +1,174 @@
+# Client tickets — architecture
+
+> Status: agreed, not yet implemented. Phase 0 (Next 16 upgrade) in progress.
+
+## 1. Scope
+
+- Clients submit **tickets** from the website and track them in their own dashboard.
+- A ticket is only accepted once its author has a **verified account**.
+- The SSI team uses an **admin dashboard** to read tickets, reply, and change their status.
+- The client and the admin talk in a **back-and-forth thread** on each ticket.
+- The client is **emailed** when the admin replies or changes the status.
+- The ticket form is a **single free-text field** for now. A select field with fixed values (category) will come later, and the schema already leaves room for it.
+
+## 2. Stack
+
+| Concern | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router) + React 19 |
+| Hosting | Vercel |
+| Database | Neon Postgres (pooled URL at runtime, direct URL for migrations) |
+| ORM | Prisma |
+| Auth | Better Auth: email/password, email verification, password reset, `role` field |
+| Email | Nodemailer → cPanel SMTP |
+| Package manager | pnpm |
+
+```
+                      ┌─────────────── Vercel · Next 16 ───────────────┐
+Visitor ─► /ticket (public form) ─► /inscription (sign-up + draft)      │
+Client  ─► /espace-client ─────────┐                                    │
+Admin   ─► /admin/tickets ─────────┤  Server Actions                    │
+                                   │  (session + role + owner checks)   │
+              Better Auth ◄────────┤                                    │
+              /api/auth/[...all]   ├─► Prisma ─────────────────────────────► Neon Postgres
+                                   └─► lib/mail.ts (Nodemailer) ──SMTP─────► cPanel mail ─► inboxes
+                      └──────────────────────────────────────────────────┘
+```
+
+## 3. Flows
+
+### New visitor
+
+```
+writes ticket on /ticket
+  → /inscription (name, email, password)
+  → account + ticket saved, ticket NOT submitted yet (submittedAt = null)
+  → verification email
+  → click link → email verified → ticket submitted (status PENDING, submittedAt = now)
+  → admin notified by email
+```
+
+The draft is stored **in the database**, not in the browser, so it survives the client opening the verification link on another device.
+
+### Existing client
+
+- Logs in at `/connexion` and creates tickets from `/espace-client/tickets/nouveau`.
+- If they wrote on `/ticket` while logged out, the draft is kept in `sessionStorage` and prefilled after login (same browser, so this is enough).
+
+### Thread
+
+- Client and admin both post `TicketMessage`s on the ticket.
+- Client posts → admin is emailed.
+- Admin posts → client is emailed.
+- No new messages on a ticket in a final state (`DONE`, `REJECTED`).
+
+## 4. Ticket lifecycle
+
+```
+PENDING ─► CONFIRMED ─► IN_PROGRESS ─► DONE
+   └──────────┴─────────────┴────────► REJECTED
+```
+
+| Code | French UI label |
+|---|---|
+| `PENDING` | En attente |
+| `CONFIRMED` | Confirmé |
+| `IN_PROGRESS` | En cours |
+| `DONE` | Terminé |
+| `REJECTED` | Annulé |
+
+Rules:
+
+- Statuses only move forward along the main line.
+- `REJECTED` can be set from any open state (`PENDING`, `CONFIRMED`, `IN_PROGRESS`).
+- `DONE` and `REJECTED` are final.
+- Only admins change status. Every change writes a `TicketEvent` and emails the client.
+
+## 5. Data model (Prisma)
+
+| Model | Fields |
+|---|---|
+| `User` *(Better Auth)* | Better Auth fields + `role: CLIENT \| ADMIN` (default `CLIENT`) |
+| `Session`, `Account`, `Verification` | Better Auth's own tables |
+| `Ticket` | `id`, `number` (autoincrement, unique), `userId`, `message`, `status`, `category?` *(future select)*, `submittedAt?`, `createdAt`, `updatedAt` |
+| `TicketMessage` | `id`, `ticketId`, `authorId`, `body`, `createdAt` |
+| `TicketEvent` | `id`, `ticketId`, `fromStatus`, `toStatus`, `actorId`, `createdAt` |
+
+- Public reference: `SSI-{year of createdAt}-{number padded to 4}`, e.g. `SSI-2026-0007`. URLs use this reference, never the internal id.
+- The admin inbox only lists tickets with `submittedAt` set.
+
+## 6. Routes
+
+| Area | Route | Purpose |
+|---|---|---|
+| Public | `/ticket` | Ticket form for visitors |
+| Public | `/inscription` | Sign-up, carries the draft ticket |
+| Public | `/connexion` | Login |
+| Public | `/mot-de-passe-oublie`, `/reinitialiser` | Password reset |
+| Client | `/espace-client` | List of own tickets + statuses |
+| Client | `/espace-client/tickets/nouveau` | New ticket |
+| Client | `/espace-client/tickets/[ref]` | Thread + reply |
+| Admin | `/admin/tickets` | All submitted tickets, filter by status |
+| Admin | `/admin/tickets/[ref]` | Thread, reply, change status |
+| API | `/api/auth/[...all]` | Better Auth handler |
+
+Access control:
+
+- `proxy.ts` (Next 16's replacement for `middleware.ts`) does an **optimistic** redirect when there is no session cookie on `/espace-client/**` and `/admin/**`.
+- The **real** check runs on the server in every page, layout and Server Action: valid session, right role, and (for clients) ownership of the ticket.
+
+## 7. Server Actions
+
+| Action | Who | Effect |
+|---|---|---|
+| `createTicket` | Client (verified) | Creates ticket, submitted immediately → email admin |
+| `signUpWithTicket` | Visitor | Creates account + unsubmitted ticket → verification email |
+| `replyToTicket` | Client (owner) / Admin | Adds `TicketMessage` → email the other side |
+| `changeTicketStatus` | Admin | Validates the transition, writes `TicketEvent` → email client |
+
+## 8. Emails
+
+| Trigger | Recipient | Source |
+|---|---|---|
+| Sign-up verification | Client | Better Auth `sendVerificationEmail` |
+| Password reset | Client | Better Auth `sendResetPassword` |
+| Ticket submitted / client replied | Admin (`ADMIN_NOTIFY_EMAIL`) | Server Action |
+| Admin replied | Client | Server Action |
+| Status changed | Client | Server Action |
+
+- Sent from `lib/mail.ts` (one Nodemailer transport) with French HTML templates in `lib/emails/`.
+- Sent after the response with Next's `after()`, so a slow SMTP server never blocks the page. Failures are logged.
+- All user text is HTML-escaped before it goes into a template.
+- Prerequisites on the `ssi-tn.com` domain: **SPF, DKIM and DMARC**, otherwise mail lands in spam. Check the cPanel **hourly send limit**.
+
+## 9. Security
+
+- No public admin sign-up: admin accounts are created by a seed script (`prisma/seed.ts`).
+- Clients can only read and reply to their own tickets, enforced in every query.
+- Message length capped (5,000 characters).
+- Better Auth's built-in rate limiting on auth endpoints.
+- Only one ticket per sign-up is accepted as a draft.
+
+## 10. Environment variables
+
+| Name | Purpose |
+|---|---|
+| `DATABASE_URL` | Neon pooled connection string |
+| `DIRECT_URL` | Neon direct connection string (migrations) |
+| `BETTER_AUTH_SECRET` | Session signing secret |
+| `BETTER_AUTH_URL` | Public site URL |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | cPanel SMTP |
+| `MAIL_FROM` | Sender, e.g. `SSI <support@ssi-tn.com>` |
+| `ADMIN_NOTIFY_EMAIL` | Where admin notifications go |
+
+## 11. Build phases
+
+| # | Phase | Output |
+|---|---|---|
+| 0 | Upgrade to Next 16 + React 19, remove duplicate configs and the npm lockfile | Clean base |
+| 1 | Foundation: Prisma + Neon schema, Better Auth, `lib/mail.ts` | Sign-up / login / verification / reset working |
+| 2 | Client side: `/ticket`, sign-up with draft, dashboard, thread | Clients submit and track tickets |
+| 3 | Admin side: inbox, reply, status change | Full loop |
+| 4 | Email wiring, admin seed, polish | Feature complete |
+
+Each phase is tested by the project owner before the next one starts.
