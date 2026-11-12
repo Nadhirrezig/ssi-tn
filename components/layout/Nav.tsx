@@ -40,7 +40,7 @@ export function Nav() {
             alt="SSI — Sociétés Sécurités et Solutions Informatiques"
             width={104}
             height={50}
-            priority
+            preload
             sizes="104px"
             className="block"
           />

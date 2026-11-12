@@ -23,7 +23,7 @@ export default function SolutionHero({ content }: { content: SolutionHeroContent
           src={content.image.src as string}
           alt={content.image.alt}
           fill
-          priority
+          preload
           // The frame is portrait on a phone and the photography is landscape,
           // so `object-cover` scales the source to the frame's *height* — it is
           // painted about twice as wide as the viewport. At a flat `100vw` the

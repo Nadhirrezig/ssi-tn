@@ -10,14 +10,15 @@ import SolutionHero from '@/components/sections/SolutionHero'
 import SolutionVideo from '@/components/sections/SolutionVideo'
 import { getSolution, solutions } from '@/lib/content/solutions'
 
-type Props = { params: { slug: string } }
+type Props = { params: Promise<{ slug: string }> }
 
 export function generateStaticParams() {
   return solutions.map((s) => ({ slug: s.slug }))
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const solution = getSolution(params.slug)
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const solution = getSolution(slug)
   if (!solution) return {}
   return {
     title: solution.name,
@@ -32,8 +33,9 @@ export function generateMetadata({ params }: Props): Metadata {
   }
 }
 
-export default function SolutionPage({ params }: Props) {
-  const solution = getSolution(params.slug)
+export default async function SolutionPage({ params }: Props) {
+  const { slug } = await params
+  const solution = getSolution(slug)
   if (!solution) notFound()
 
   return (

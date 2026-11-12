@@ -451,7 +451,7 @@ export default function Header({
         }`}
       >
         <div className="mx-auto flex h-20 max-w-content items-center justify-between px-6">
-          <Logo priority />
+          <Logo preload />
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-8 lg:flex">

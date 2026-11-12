@@ -95,7 +95,7 @@ export default function Hero() {
                 src="/website-content/hero.webp"
                 alt="Collaboratrice SSI souriante travaillant sur son ordinateur portable"
                 fill
-                priority
+                preload
                 sizes="(max-width: 1024px) 90vw, 760px"
                 className="object-contain object-bottom"
               />

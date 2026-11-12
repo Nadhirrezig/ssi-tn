@@ -58,9 +58,10 @@ async function fetchWithRetry(url: string): Promise<Response> {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { key: string[] } }
+  { params }: { params: Promise<{ key: string[] }> }
 ) {
-  const objectKey = params.key.join("/")
+  const { key } = await params
+  const objectKey = key.join("/")
 
   if (
     !ALLOWED_PREFIXES.some((prefix) => objectKey.startsWith(prefix)) ||

@@ -102,7 +102,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr" className={`${openSans.variable} ${quicksand.variable}`}>
+    // data-scroll-behavior: globals.css sets `scroll-behavior: smooth` for
+    // in-page anchors. Next 16 no longer resets it during route changes unless
+    // this attribute is present, so without it every navigation would
+    // smooth-scroll to the top instead of jumping there.
+    <html
+      lang="fr"
+      data-scroll-behavior="smooth"
+      className={`${openSans.variable} ${quicksand.variable}`}
+    >
       <head>
         <script
           type="application/ld+json"

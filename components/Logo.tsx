@@ -8,11 +8,11 @@ import Link from 'next/link'
 export default function Logo({
   href = '/#home',
   imgClassName = 'h-11 w-auto',
-  priority = false,
+  preload = false,
 }: {
   href?: string
   imgClassName?: string
-  priority?: boolean
+  preload?: boolean
 }) {
   return (
     <Link
@@ -25,7 +25,7 @@ export default function Logo({
         alt="SSI — Sécurité et Solutions Informatiques"
         width={578}
         height={277}
-        priority={priority}
+        preload={preload}
         className={imgClassName}
       />
     </Link>
