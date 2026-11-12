@@ -141,7 +141,7 @@ export async function addClientReply(userId: string, ticketId: string, body: str
   })
   if (!ticket) throw new TicketError('Demande introuvable.')
   if (isFinalStatus(ticket.status)) {
-    throw new TicketError('Cette demande est clôturée : ouvrez une nouvelle demande pour poursuivre.')
+    throw new TicketError('Cette demande est clôturée : ouvrez une nouvelle demande pour poursuivre.')
   }
 
   const recent = await db.ticketMessage.count({

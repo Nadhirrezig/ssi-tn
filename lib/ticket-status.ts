@@ -16,7 +16,7 @@ export const STATUS_META: Record<TicketStatus, { label: string; description: str
   },
   CONFIRMED: {
     label: 'Confirmé',
-    description: 'Votre demande est prise en charge : elle va être confiée à un technicien.',
+    description: 'Votre demande est prise en charge : elle va être confiée à un technicien.',
   },
   IN_PROGRESS: {
     label: 'En cours',

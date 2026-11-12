@@ -1,12 +1,12 @@
 /** Phone fallback for urgent issues — a ticket is not the right channel for "everything is down". */
 export default function HelpCard() {
   return (
-    <div className="rounded-[24px] bg-navy p-6">
+    <div className="rounded-[24px] bg-navy p-5 sm:p-6">
       <p className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-accentYellow">
         Urgence
       </p>
       <p className="mt-3 font-heading text-lg font-bold leading-snug text-white">
-        Service bloqué ou incident de sécurité ?
+        Service bloqué ou incident de sécurité ?
       </p>
       <p className="mt-2 text-sm leading-relaxed text-white/70">
         Appelez directement notre support, nous intervenons en priorité.

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const TABS = [
   { href: '/espace-client', label: 'Mes demandes' },
-  { href: NEW_TICKET_PATH, label: 'Nouvelle demande' },
+  { href: NEW_TICKET_PATH, label: 'Nouvelle demande', short: 'Nouvelle' },
 ]
 
 /**

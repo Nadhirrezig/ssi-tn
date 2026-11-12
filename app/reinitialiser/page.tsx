@@ -38,7 +38,7 @@ export default async function ReinitialiserPage({
       ) : (
         <div className="space-y-4">
           <FormMessage tone="error">
-            Ce lien de réinitialisation n’est plus valide : il a expiré ou a déjà été utilisé.
+            Ce lien de réinitialisation n’est plus valide : il a expiré ou a déjà été utilisé.
           </FormMessage>
           <Link href="/mot-de-passe-oublie" className={AUTH_LINK}>
             Demander un nouveau lien

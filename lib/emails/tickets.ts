@@ -17,7 +17,7 @@ const adminUrl = (ref: string) => `${SITE_URL}/admin/tickets/${ref}`
 const clientUrl = (ref: string) => `${SITE_URL}/espace-client/tickets/${ref}`
 
 const REPLY_IN_PORTAL =
-  'Pour répondre, utilisez votre espace client : l’historique complet de la demande y est conservé.'
+  'Pour répondre, utilisez votre espace client : l’historique complet de la demande y est conservé.'
 
 // ─── To the client ──────────────────────────────────────────────────────────
 
@@ -35,10 +35,10 @@ export function teamReplyClientMessage(
       preheader: excerpt(reply, 120),
       heading: `Bonjour ${client.name},`,
       paragraphs: [
-        `Notre équipe a répondu à votre demande ${ticket.ref} « ${ticketTitle(ticket.message, 70)} » :`,
+        `Notre équipe a répondu à votre demande ${ticket.ref} « ${ticketTitle(ticket.message, 70)} » :`,
         excerpt(reply),
         ...(newStatus
-          ? [`Statut de la demande : ${STATUS_META[newStatus].label}. ${STATUS_META[newStatus].description}`]
+          ? [`Statut de la demande : ${STATUS_META[newStatus].label}. ${STATUS_META[newStatus].description}`]
           : []),
       ],
       action: { label: 'Voir la demande', url: clientUrl(ticket.ref) },
@@ -79,7 +79,7 @@ export function newTicketAdminMessage(to: string, ticket: TicketRef, client: Cli
     ...renderEmail({
       preheader: `${client.name} a ouvert une demande.`,
       heading: `Nouvelle demande ${ticket.ref}`,
-      paragraphs: [`De : ${client.name} <${client.email}>`, excerpt(ticket.message)],
+      paragraphs: [`De : ${client.name} <${client.email}>`, excerpt(ticket.message)],
       action: { label: 'Ouvrir la demande', url: adminUrl(ticket.ref) },
     }),
   }
@@ -97,7 +97,7 @@ export function clientReplyAdminMessage(
     ...renderEmail({
       preheader: `${client.name} a répondu sur ${ticket.ref}.`,
       heading: `Réponse sur ${ticket.ref}`,
-      paragraphs: [`De : ${client.name} <${client.email}>`, excerpt(reply)],
+      paragraphs: [`De : ${client.name} <${client.email}>`, excerpt(reply)],
       action: { label: 'Ouvrir la demande', url: adminUrl(ticket.ref) },
     }),
   }

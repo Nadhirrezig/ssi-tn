@@ -36,7 +36,7 @@ export function resetPasswordMessage(user: Recipient, url: string): MailMessage 
       ],
       action: { label: 'Choisir un nouveau mot de passe', url },
       footnote:
-        'Ce lien est valable 1 heure. Si vous n’avez rien demandé, ignorez ce message : votre mot de passe reste inchangé.',
+        'Ce lien est valable 1 heure. Si vous n’avez rien demandé, ignorez ce message : votre mot de passe reste inchangé.',
     }),
   }
 }
@@ -54,11 +54,11 @@ export function accountExistsMessage(user: Recipient): MailMessage {
       preheader: 'Une inscription a été tentée avec votre adresse e-mail.',
       heading: `Bonjour ${user.name},`,
       paragraphs: [
-        'Quelqu’un — sans doute vous — vient d’essayer de créer un espace client SSI avec cette adresse e-mail. Un compte existe déjà : connectez-vous simplement.',
+        'Quelqu’un — sans doute vous — vient d’essayer de créer un espace client SSI avec cette adresse e-mail. Un compte existe déjà : connectez-vous simplement.',
       ],
       action: { label: 'Me connecter', url: `${SITE_URL}/connexion` },
       footnote:
-        'Mot de passe oublié ? Utilisez « Mot de passe oublié » sur la page de connexion. Si vous n’êtes pas à l’origine de cette demande, ignorez ce message.',
+        'Mot de passe oublié ? Utilisez « Mot de passe oublié » sur la page de connexion. Si vous n’êtes pas à l’origine de cette demande, ignorez ce message.',
     }),
   }
 }

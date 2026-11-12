@@ -14,7 +14,7 @@ type Mode = 'new' | 'existing'
 type Message = { tone: 'error' | 'success'; text: string }
 
 const PLACEHOLDER =
-  'Ex. : Nous souhaitons sécuriser l’accès à distance de nos 12 collaborateurs (VPN, double authentification). Pouvez-vous nous proposer une solution ?'
+  'Ex. : Nous souhaitons sécuriser l’accès à distance de nos 12 collaborateurs (VPN, double authentification). Pouvez-vous nous proposer une solution ?'
 
 /**
  * Public ticket form: the request first, then who is sending it.
@@ -113,7 +113,7 @@ function RequestForm() {
       <fieldset className="space-y-4">
         <Step number={1} title="Votre demande" id="step-request" />
         <p id="message-help" className="text-sm text-slatebody">
-          Décrivez le problème ou le besoin avec vos mots : ce qui se passe, depuis quand, qui est
+          Décrivez le problème ou le besoin avec vos mots : ce qui se passe, depuis quand, qui est
           concerné.
         </p>
         <MessageTextarea
@@ -142,7 +142,7 @@ function RequestForm() {
           ).map((option) => (
             <label
               key={option.value}
-              className={`cursor-pointer rounded-full px-4 py-2.5 text-center font-heading text-sm font-bold transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
+              className={`cursor-pointer whitespace-nowrap rounded-full px-3 py-2.5 text-center font-heading text-sm font-bold transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
                 mode === option.value ? 'bg-white text-navy shadow-card' : 'text-slatebody hover:text-navy'
               }`}
             >
@@ -194,7 +194,7 @@ function RequestForm() {
               disabled={pending}
             />
             <p className="text-sm text-slatebody sm:col-span-2">
-              Un espace client est créé pour vous : vous y suivrez cette demande et les suivantes.
+              Un espace client est créé pour vous : vous y suivrez cette demande et les suivantes.
             </p>
           </div>
         ) : (
@@ -211,7 +211,7 @@ function RequestForm() {
             />
             <p className="text-right text-sm">
               <Link href="/mot-de-passe-oublie" className={AUTH_LINK}>
-                Mot de passe oublié ?
+                Mot de passe oublié ?
               </Link>
             </p>
           </div>
@@ -258,13 +258,13 @@ function CheckInbox({ email }: { email: string }) {
           <path d="m3 7 9 6 9-6" />
         </svg>
       </span>
-      <h2 className="mt-5 font-heading text-2xl font-bold text-navy">Dernière étape : confirmez votre adresse</h2>
+      <h2 className="mt-5 font-heading text-2xl font-bold text-navy">Dernière étape : confirmez votre adresse</h2>
       <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-slatebody">
         Nous avons envoyé un lien à <span className="font-semibold text-navy">{email}</span>. Votre
         demande sera transmise à notre équipe dès que vous aurez cliqué dessus.
       </p>
       <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-slatebody">
-        Rien reçu ? Vérifiez vos courriers indésirables. Si vous aviez déjà un espace client,{' '}
+        Rien reçu ? Vérifiez vos courriers indésirables. Si vous aviez déjà un espace client,{' '}
         <Link href={`/connexion?next=${encodeURIComponent(NEW_TICKET_PATH)}`} className={AUTH_LINK}>
           connectez-vous
         </Link>{' '}

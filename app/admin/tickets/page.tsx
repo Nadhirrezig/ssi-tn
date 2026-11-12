@@ -60,9 +60,9 @@ export default async function AdminTicketsPage({ searchParams }: { searchParams:
         }
       />
 
-      <div className="mx-auto max-w-content px-6 py-10 sm:py-14">
+      <div className="mx-auto max-w-content px-6 py-8 sm:py-14">
         <div className="mb-5 flex flex-col-reverse gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <nav aria-label="Vues" className="overflow-x-auto">
+          <nav aria-label="Vues" className="no-scrollbar -mx-6 overflow-x-auto px-6 lg:mx-0 lg:px-0">
             <ul className="inline-flex gap-1 rounded-full bg-soft p-1">
               {VIEWS.map((v) => {
                 const isActive = v.id === view.id

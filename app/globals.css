@@ -42,6 +42,10 @@ section[id] {
   text-transform: uppercase;
 }
 
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox, and the standard property */
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

@@ -105,16 +105,18 @@ export default function TicketThread({
       ),
   ].sort((a, b) => a.at.getTime() - b.at.getTime())
 
+  // Phones: no avatar rail or timeline line — at 375px that column cost every
+  // message a fifth of its width. The avatar moves into the message header.
   return (
     <ol
       aria-label="Échanges"
-      className="relative space-y-6 before:absolute before:bottom-6 before:left-5 before:top-6 before:w-px before:bg-navy/10 before:content-['']"
+      className="relative space-y-4 sm:space-y-6 sm:before:absolute sm:before:bottom-6 sm:before:left-5 sm:before:top-6 sm:before:w-px sm:before:bg-navy/10 sm:before:content-['']"
     >
       {entries.map((entry) =>
         entry.kind === 'event' ? (
-          <li key={entry.id} className="relative flex items-center gap-4">
-            <span className="grid w-10 shrink-0 place-items-center">
-              <span className="h-2.5 w-2.5 rounded-full bg-navy/20 ring-4 ring-white" />
+          <li key={entry.id} className="relative flex items-center gap-2.5 px-1 sm:gap-4 sm:px-0">
+            <span className="grid shrink-0 place-items-center sm:w-10">
+              <span className="h-2 w-2 rounded-full bg-navy/20 ring-4 ring-white sm:h-2.5 sm:w-2.5" />
             </span>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slatebody">
               <span>
@@ -136,15 +138,19 @@ export default function TicketThread({
           <li key={entry.id} className="relative flex gap-4">
             {/* self-start: as a flex item it would otherwise stretch to the
                 card's height. The white ring cuts the timeline line. */}
-            <span className="relative self-start rounded-full ring-4 ring-white">
+            <span className="relative hidden self-start rounded-full ring-4 ring-white sm:block">
               <Avatar name={entry.avatarName} team={entry.team} />
             </span>
             <article
-              className={`min-w-0 flex-1 rounded-[20px] border p-5 ${
+              className={`min-w-0 flex-1 rounded-[18px] border p-4 sm:rounded-[20px] sm:p-5 ${
                 entry.team ? 'border-primary/15 bg-primary-50/60' : 'border-black/5 bg-white'
               }`}
             >
-              <header className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+              <header className="flex items-start gap-2.5 sm:block">
+                <span className="sm:hidden">
+                  <Avatar name={entry.avatarName} team={entry.team} size="sm" />
+                </span>
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-3 sm:gap-y-1">
                 <p className="font-heading text-sm font-bold text-navy">
                   {entry.author}
                   {entry.tag ? (
@@ -157,7 +163,7 @@ export default function TicketThread({
                     </span>
                   ) : null}
                   {entry.opened ? (
-                    <span className="ml-2 font-body text-xs font-normal text-slatebody">
+                    <span className="ml-2 whitespace-nowrap font-body text-xs font-normal text-slatebody">
                       a ouvert la demande
                     </span>
                   ) : null}
@@ -165,6 +171,7 @@ export default function TicketThread({
                 <time dateTime={entry.at.toISOString()} className="text-xs text-slatebody">
                   {formatDateTime(entry.at)}
                 </time>
+                </div>
               </header>
               <p className="mt-3 whitespace-pre-wrap break-words text-[15px] leading-relaxed text-navy/90">
                 {entry.body}

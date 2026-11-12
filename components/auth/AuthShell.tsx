@@ -25,7 +25,7 @@ export default function AuthShell({
     <>
       <Header solid />
       <main className="pt-20">
-        <div className="bg-soft py-14 sm:py-20">
+        <div className="bg-soft py-10 sm:py-20">
           <div className="mx-auto max-w-content px-6">
             <div className="mx-auto max-w-md">
               <p className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-primary">
@@ -38,7 +38,7 @@ export default function AuthShell({
                 <p className="mt-4 text-base leading-relaxed text-slatebody">{lead}</p>
               ) : null}
 
-              <div className="mt-8 rounded-[28px] bg-white p-6 shadow-card sm:p-8">{children}</div>
+              <div className="mt-6 rounded-[24px] bg-white p-5 shadow-card sm:mt-8 sm:rounded-[28px] sm:p-8">{children}</div>
 
               {aside ? (
                 <div className="mt-6 space-y-2 text-center text-sm text-slatebody">{aside}</div>

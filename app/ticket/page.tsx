@@ -10,7 +10,7 @@ import { getSession } from '@/lib/session'
 export const metadata: Metadata = {
   title: 'Soumettre une demande',
   description:
-    'Un incident, une question ou un projet informatique ? Décrivez votre besoin : l’équipe SSI qualifie votre demande et vous répond dans votre espace client.',
+    'Un incident, une question ou un projet informatique ? Décrivez votre besoin : l’équipe SSI qualifie votre demande et vous répond dans votre espace client.',
   alternates: { canonical: '/ticket' },
 }
 
@@ -40,7 +40,7 @@ export default async function TicketPage() {
     <>
       <Header solid />
       <main className="pt-20">
-        <div className="bg-soft py-14 sm:py-20">
+        <div className="bg-soft py-10 sm:py-20">
           <div className="mx-auto max-w-content px-6">
             <p className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-primary">
               Assistance
@@ -49,15 +49,15 @@ export default async function TicketPage() {
               Soumettre une demande
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slatebody">
-              Un incident, une question ou un projet : décrivez-le, notre équipe s’en charge et vous
+              Un incident, une question ou un projet : décrivez-le, notre équipe s’en charge et vous
               tient informé à chaque étape.
             </p>
           </div>
         </div>
 
-        <div className="mx-auto max-w-content px-6 py-14 sm:py-20">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-16">
-            <div className="rounded-[28px] border border-black/5 bg-white p-6 shadow-card sm:p-10">
+        <div className="mx-auto max-w-content px-6 py-10 sm:py-20">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-16">
+            <div className="rounded-[24px] border border-black/5 bg-white p-5 shadow-card sm:rounded-[28px] sm:p-10">
               <TicketRequestForm />
             </div>
 

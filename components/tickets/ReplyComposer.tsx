@@ -84,16 +84,18 @@ function ReplyForm({
         </div>
       ) : null}
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+      {/* Phones: status select and button stack at full width; from sm up
+          they share one line. */}
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         {nextStatuses?.length ? (
-          <label className="flex flex-wrap items-center gap-2 text-sm text-slatebody">
-            <span className="font-heading font-bold text-navy">Après envoi :</span>
+          <label className="flex flex-col gap-1.5 text-sm text-slatebody sm:flex-row sm:items-center sm:gap-2">
+            <span className="font-heading font-bold text-navy">Après envoi :</span>
             <select
               name="nextStatus"
               value={nextStatus}
               onChange={(e) => setNextStatus(e.target.value as TicketStatus | '')}
               disabled={pending}
-              className="rounded-full border border-black/10 bg-white py-2 pl-4 pr-9 font-heading text-sm font-bold text-navy focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-full border border-black/10 bg-white py-2.5 pl-4 pr-9 font-heading text-sm font-bold text-navy focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-auto sm:py-2"
             >
               <option value="">
                 {currentStatus ? `Garder « ${STATUS_META[currentStatus].label} »` : 'Statut inchangé'}
@@ -115,7 +117,7 @@ function ReplyForm({
           type="submit"
           disabled={pending || !body.trim()}
           aria-busy={pending}
-          className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 font-heading text-sm font-bold text-white transition hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center rounded-full bg-primary px-7 py-3 font-heading text-sm font-bold text-white transition hover:bg-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
           {pending ? 'Envoi…' : nextStatus ? `Envoyer · ${STATUS_META[nextStatus].label}` : 'Envoyer'}
         </button>

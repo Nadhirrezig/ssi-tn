@@ -9,7 +9,7 @@ export default function ClientCard({
 }) {
   const count = client._count.tickets
   return (
-    <section aria-labelledby="client-card" className="rounded-[24px] border border-black/5 bg-white p-6">
+    <section aria-labelledby="client-card" className="rounded-[24px] border border-black/5 bg-white p-5 sm:p-6">
       <h2 id="client-card" className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-slatebody">
         Client
       </h2>

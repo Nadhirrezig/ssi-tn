@@ -3,6 +3,16 @@ import StatusBadge from './StatusBadge'
 import type { ClientTicketSummary } from '@/lib/tickets'
 import { formatDate, isFinalStatus, ticketTitle } from '@/lib/ticket-status'
 
+/** Shown in the meta line, at every size: one element, one place. */
+function AwaitingReply() {
+  return (
+    <span className="inline-flex items-center gap-1.5 font-heading text-xs font-bold text-primary">
+      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
+      Réponse de SSI
+    </span>
+  )
+}
+
 /**
  * "Mes demandes": one row per ticket, newest activity first. Each row reads
  * like an inbox line — reference, title, status, last activity — and the
@@ -17,32 +27,34 @@ export default function TicketList({ tickets }: { tickets: ClientTicketSummary[]
           <li key={ticket.id}>
             <Link
               href={`/espace-client/tickets/${ticket.ref}`}
-              className="group flex items-center gap-4 px-5 py-5 transition hover:bg-soft focus-visible:bg-soft focus-visible:outline-none sm:px-6"
+              className="group flex items-center gap-4 px-4 py-4 transition hover:bg-soft focus-visible:bg-soft focus-visible:outline-none sm:px-6 sm:py-5"
             >
               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                {/* Phones: reference and status share the top line, so the
+                    title below gets the full width instead of a few words. */}
+                <div className="flex items-center justify-between gap-3 sm:justify-start">
                   <span className="font-mono text-xs text-primary">{ticket.ref}</span>
-                  {awaitingClient ? (
-                    <span className="inline-flex items-center gap-1.5 font-heading text-xs font-bold text-primary">
-                      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
-                      Réponse de SSI
-                    </span>
-                  ) : null}
+                  <span className="sm:hidden">
+                    <StatusBadge status={ticket.status} />
+                  </span>
                 </div>
-                <p className="mt-1.5 truncate font-heading text-base font-bold text-navy group-hover:text-primary">
+                <p className="mt-1.5 line-clamp-2 font-heading text-base font-bold leading-snug text-navy group-hover:text-primary sm:line-clamp-1">
                   {ticketTitle(ticket.message)}
                 </p>
-                <p className="mt-1 text-sm text-slatebody">
-                  Ouverte le {formatDate(ticket.createdAt)}
-                  {ticket.replyCount > 0
-                    ? ` · ${ticket.replyCount} message${ticket.replyCount > 1 ? 's' : ''}`
-                    : ''}
+                <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slatebody">
+                  <span>
+                    Ouverte le {formatDate(ticket.createdAt)}
+                    {ticket.replyCount > 0
+                      ? ` · ${ticket.replyCount} message${ticket.replyCount > 1 ? 's' : ''}`
+                      : ''}
+                  </span>
+                  {awaitingClient ? <AwaitingReply /> : null}
                 </p>
               </div>
 
-              <div className="flex shrink-0 flex-col items-end gap-2">
+              <div className="hidden shrink-0 flex-col items-end gap-2 sm:flex">
                 <StatusBadge status={ticket.status} />
-                <span className="hidden text-xs text-slatebody sm:block">
+                <span className="text-xs text-slatebody">
                   Mise à jour le {formatDate(ticket.updatedAt)}
                 </span>
               </div>

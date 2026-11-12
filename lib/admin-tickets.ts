@@ -162,7 +162,7 @@ async function loadOpenTicket(ticketId: string) {
   })
   if (!ticket) throw new TicketError('Demande introuvable.')
   if (isFinalStatus(ticket.status)) {
-    throw new TicketError('Cette demande est clôturée : elle ne peut plus être modifiée.')
+    throw new TicketError('Cette demande est clôturée : elle ne peut plus être modifiée.')
   }
   return ticket
 }

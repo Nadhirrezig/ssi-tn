@@ -14,7 +14,7 @@ export default function MotDePasseOubliePage() {
     <AuthShell
       eyebrow="Espace client"
       title="Mot de passe oublié"
-      lead="Indiquez l’adresse e-mail de votre compte : nous vous enverrons un lien pour en choisir un nouveau."
+      lead="Indiquez l’adresse e-mail de votre compte : nous vous enverrons un lien pour en choisir un nouveau."
       aside={
         <p>
           <Link href="/connexion" className={AUTH_LINK}>

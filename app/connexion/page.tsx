@@ -31,7 +31,7 @@ export default async function ConnexionPage({
     error && VERIFY_ERRORS.has(error)
       ? {
           tone: 'error' as const,
-          text: 'Ce lien de confirmation n’est plus valide. Connectez-vous : nous vous en enverrons un nouveau.',
+          text: 'Ce lien de confirmation n’est plus valide. Connectez-vous : nous vous en enverrons un nouveau.',
         }
       : undefined
 

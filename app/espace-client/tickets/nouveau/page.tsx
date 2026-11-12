@@ -22,17 +22,17 @@ export default async function NouvelleDemandePage() {
       <PageBand
         eyebrow="Nouvelle demande"
         title="Décrivez votre besoin"
-        lead="Un incident, une question ou un projet : notre équipe qualifie votre demande et vous répond dans votre espace client."
+        lead="Un incident, une question ou un projet : notre équipe qualifie votre demande et vous répond dans votre espace client."
       />
 
-      <div className="mx-auto max-w-content px-6 py-10 sm:py-14">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
-          <div className="rounded-[28px] border border-black/5 bg-white p-6 shadow-card sm:p-8">
+      <div className="mx-auto max-w-content px-6 py-8 sm:py-14">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
+          <div className="rounded-[24px] border border-black/5 bg-white p-5 shadow-card sm:rounded-[28px] sm:p-8">
             <NewTicketForm />
           </div>
 
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
-            <section aria-labelledby="tips" className="rounded-[24px] border border-black/5 bg-white p-6">
+            <section aria-labelledby="tips" className="rounded-[24px] border border-black/5 bg-white p-5 sm:p-6">
               <h2 id="tips" className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-slatebody">
                 Pour un traitement rapide
               </h2>

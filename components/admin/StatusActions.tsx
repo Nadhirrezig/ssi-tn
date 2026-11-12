@@ -33,7 +33,7 @@ export default function StatusActions({
   }
 
   return (
-    <section aria-labelledby="status-actions" className="rounded-[24px] border border-black/5 bg-white p-6">
+    <section aria-labelledby="status-actions" className="rounded-[24px] border border-black/5 bg-white p-5 sm:p-6">
       <h2
         id="status-actions"
         className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-slatebody"
@@ -62,10 +62,10 @@ export default function StatusActions({
           confirmCancel ? (
             <div className="rounded-2xl bg-accentCoral/10 p-4">
               <p className="text-sm text-navy">
-                Annuler cette demande ? Elle sera clôturée et ne pourra plus recevoir de réponse.
+                Annuler cette demande ? Elle sera clôturée et ne pourra plus recevoir de réponse.
               </p>
               <p className="mt-1.5 text-xs text-slatebody">
-                Pour en donner la raison au client, répondez plutôt avec « Après envoi : Annulé ».
+                Pour en donner la raison au client, répondez plutôt avec « Après envoi : Annulé ».
               </p>
               <div className="mt-3 flex gap-2">
                 <button

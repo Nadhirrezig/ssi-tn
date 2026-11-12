@@ -55,7 +55,7 @@ export function renderEmail(content: EmailContent): { html: string; text: string
     ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 24px;"><tr><td style="border-radius:999px;background:${PRIMARY};">
         <a href="${escapeHtml(action.url)}" style="display:inline-block;padding:14px 28px;font-family:${FONT};font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:999px;">${escapeHtml(action.label)}</a>
       </td></tr></table>
-      <p style="margin:0 0 16px;font-family:${FONT};font-size:12px;line-height:1.6;color:${BODY};">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br><a href="${escapeHtml(action.url)}" style="color:${PRIMARY};word-break:break-all;">${escapeHtml(action.url)}</a></p>`
+      <p style="margin:0 0 16px;font-family:${FONT};font-size:12px;line-height:1.6;color:${BODY};">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br><a href="${escapeHtml(action.url)}" style="color:${PRIMARY};word-break:break-all;">${escapeHtml(action.url)}</a></p>`
     : ''
 
   const footnoteHtml = footnote

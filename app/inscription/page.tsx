@@ -22,7 +22,7 @@ export default async function InscriptionPage() {
       lead="Soumettez vos demandes à nos équipes et suivez leur avancement, au même endroit."
       aside={
         <p>
-          Déjà client ?{' '}
+          Déjà client ?{' '}
           <Link href="/connexion" className={AUTH_LINK}>
             Se connecter
           </Link>

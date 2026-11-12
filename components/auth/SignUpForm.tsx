@@ -52,7 +52,7 @@ export default function SignUpForm() {
           votre espace client.
         </p>
         <p className="text-sm leading-relaxed text-slatebody">
-          Rien reçu après quelques minutes ? Regardez dans vos courriers indésirables, ou{' '}
+          Rien reçu après quelques minutes ? Regardez dans vos courriers indésirables, ou{' '}
           <Link href="/connexion" className={AUTH_LINK}>
             connectez-vous
           </Link>{' '}

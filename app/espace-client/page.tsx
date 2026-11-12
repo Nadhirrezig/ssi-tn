@@ -52,12 +52,12 @@ export default async function MesDemandesPage({
         }
       />
 
-      <div className="mx-auto max-w-content px-6 py-10 sm:py-14">
+      <div className="mx-auto max-w-content px-6 py-8 sm:py-14">
         {bienvenue ? (
           <div className="mb-8">
             <ClearDraft />
             <FormMessage tone="success">
-              Votre adresse e-mail est confirmée : bienvenue dans votre espace client.
+              Votre adresse e-mail est confirmée : bienvenue dans votre espace client.
               {tickets.length > 0 ? ' Votre demande a bien été transmise à notre équipe.' : ''}
             </FormMessage>
           </div>
@@ -67,7 +67,7 @@ export default async function MesDemandesPage({
           <EmptyState />
         ) : (
           <>
-            <nav aria-label="Filtrer les demandes" className="mb-5 overflow-x-auto">
+            <nav aria-label="Filtrer les demandes" className="no-scrollbar -mx-6 mb-5 overflow-x-auto px-6 sm:mx-0 sm:px-0">
               <ul className="inline-flex gap-1 rounded-full bg-soft p-1">
                 {FILTERS.map((filter) => {
                   const isActive = filter.id === active
@@ -96,7 +96,7 @@ export default async function MesDemandesPage({
             ) : (
               <p className="rounded-[24px] border border-dashed border-black/10 px-6 py-12 text-center text-slatebody">
                 {active === 'en-cours'
-                  ? 'Aucune demande en cours : tout est traité.'
+                  ? 'Aucune demande en cours : tout est traité.'
                   : 'Aucune demande clôturée pour le moment.'}
               </p>
             )}
@@ -109,7 +109,7 @@ export default async function MesDemandesPage({
 
 function EmptyState() {
   return (
-    <div className="rounded-[28px] border border-black/5 px-6 py-16 text-center">
+    <div className="rounded-[24px] border border-black/5 px-5 py-12 text-center sm:rounded-[28px] sm:px-6 sm:py-16">
       <span aria-hidden="true" className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-primary-50 text-primary">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M4 5h16v11H8l-4 4z" />
@@ -118,7 +118,7 @@ function EmptyState() {
       </span>
       <h2 className="mt-5 font-heading text-xl font-bold text-navy">Aucune demande pour le moment</h2>
       <p className="mx-auto mt-2 max-w-md text-base leading-relaxed text-slatebody">
-        Un problème, une question, un besoin ? Décrivez-le : notre équipe vous répond ici même.
+        Un problème, une question, un besoin ? Décrivez-le : notre équipe vous répond ici même.
       </p>
       <Link href={NEW_TICKET_PATH} className={`${PRIMARY_LINK} mt-7`}>
         Ouvrir ma première demande

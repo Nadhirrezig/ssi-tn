@@ -56,13 +56,13 @@ export default async function AdminTicketPage({ params }: Props) {
           </span>
         }
       >
-        <div className="mt-8 max-w-2xl rounded-[20px] bg-white p-5 sm:p-6">
+        <div className="mt-6 max-w-2xl rounded-[20px] bg-white p-4 sm:mt-8 sm:p-6">
           <StatusStepper status={ticket.status} rejectedFrom={rejectedFrom} />
         </div>
       </PageBand>
 
-      <div className="mx-auto max-w-content px-6 py-10 sm:py-14">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12">
+      <div className="mx-auto max-w-content px-6 py-8 sm:py-14">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12">
           <section aria-labelledby="exchanges" className="min-w-0">
             <h2 id="exchanges" className="sr-only">
               Échanges
@@ -82,8 +82,8 @@ export default async function AdminTicketPage({ params }: Props) {
 
             <div className="mt-8">
               {final ? (
-                <p className="rounded-[20px] border border-dashed border-black/10 p-6 text-center text-base text-slatebody">
-                  Demande clôturée : elle ne peut plus recevoir de réponse.
+                <p className="rounded-[20px] border border-dashed border-black/10 p-5 text-center sm:p-6 text-base text-slatebody">
+                  Demande clôturée : elle ne peut plus recevoir de réponse.
                 </p>
               ) : (
                 <ReplyComposer

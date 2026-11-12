@@ -61,7 +61,7 @@ export default function SignInForm({ next, notice }: { next: string; notice?: Me
       />
       <p className="-mt-2 text-right text-sm">
         <Link href="/mot-de-passe-oublie" className={AUTH_LINK}>
-          Mot de passe oublié ?
+          Mot de passe oublié ?
         </Link>
       </p>
 
