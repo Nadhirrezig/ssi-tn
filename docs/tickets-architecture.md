@@ -1,6 +1,6 @@
 # Client tickets — architecture
 
-> Status: Phase 0 (Next 16) and Phase 1 (database, auth, mailer) implemented. Phase 2 next.
+> Status: Phases 0–2 implemented (Next 16; database, auth, mailer; client portal and public form). Phase 3 (admin) next.
 
 ## 1. Scope
 
@@ -50,10 +50,13 @@ writes ticket on /ticket
 
 The draft is stored **in the database**, not in the browser, so it survives the client opening the verification link on another device.
 
+How: the `/ticket` form sends the text as an extra `ticketMessage` field on Better Auth's sign-up request (Better Auth ignores unknown fields). The `databaseHooks.user.create.after` hook in `lib/auth.ts` saves it — it only fires for a genuinely new user, after the user row is committed, so a sign-up attempt with someone else's address can never attach a draft to their account. `emailVerification.afterEmailVerification` then submits the drafts and notifies the team.
+
 ### Existing client
 
 - Logs in at `/connexion` and creates tickets from `/espace-client/tickets/nouveau`.
-- If they wrote on `/ticket` while logged out, the draft is kept in `sessionStorage` and prefilled after login (same browser, so this is enough).
+- On `/ticket`, the "Déjà client" tab logs them in inline and lands on `/espace-client/tickets/nouveau` with the text prefilled.
+- The text being written is kept in `localStorage` (`lib/ticket-draft.ts`): 24 h expiry, cleared on send, on sign-out and on the post-verification welcome page.
 
 ### Thread
 
@@ -118,14 +121,25 @@ Access control:
 - The **real** check runs on the server in every page, layout and Server Action: valid session, right role, and (for clients) ownership of the ticket. These go through `lib/session.ts` (`getSession`, `requireUser`, `requireAdmin`).
 - Login, sign-up and password-reset forms call Better Auth **from the browser** (`lib/auth-client.ts` → `/api/auth/*`), not through `auth.api` in Server Actions: Better Auth only applies rate limiting and origin checks to HTTP requests.
 
+### Client portal UI (Phase 2)
+
+Patterns taken from established service portals (Jira Service Management, Freshdesk, Gorgias, HubSpot), in the site's own theme:
+
+- **Mes demandes**: inbox-style rows (reference, title, status, last update, "Réponse de SSI" marker), filter tabs *Toutes · En cours · Clôturées* with counts.
+- **Ticket page**: heading with reference + status, a segmented progress bar with one sentence answering "what happens now?", the conversation as a single timeline (request, replies, status changes inline), a details panel and an urgent-phone card.
+- **Status badges**: one meaning, one colour, everywhere; navy text on a light tint from the existing palette (AA contrast).
+- Files: `components/tickets/*`, `app/espace-client/*`, `app/ticket/page.tsx`.
+
 ## 7. Server Actions
 
 | Action | Who | Effect |
 |---|---|---|
-| `createTicket` | Client (verified) | Creates ticket, submitted immediately → email admin |
-| `signUpWithTicket` | Visitor | Creates account + unsubmitted ticket → verification email |
-| `replyToTicket` | Client (owner) / Admin | Adds `TicketMessage` → email the other side |
-| `changeTicketStatus` | Admin | Validates the transition, writes `TicketEvent` → email client |
+| `createTicketAction` | Client (verified) | Creates ticket, submitted immediately → email admin |
+| *(Better Auth sign-up + hooks)* | Visitor | Creates account + unsubmitted ticket → verification email; submitted on verification |
+| `replyToTicketAction` | Client (owner) | Adds `TicketMessage` → email admin *(admin side in Phase 3)* |
+| `changeTicketStatus` | Admin | Validates the transition, writes `TicketEvent` → email client *(Phase 3)* |
+
+Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket and per-hour limits are enforced in `lib/tickets.ts` (10 new tickets, 40 replies per user per hour).
 
 ## 8. Emails
 
@@ -186,7 +200,7 @@ On Vercel: set the variables, and run `pnpm db:deploy` against production before
 |---|---|---|
 | 0 | Upgrade to Next 16 + React 19, remove duplicate configs and the npm lockfile | Clean base |
 | 1 | Foundation: Prisma + Neon schema, Better Auth, `lib/mail.ts`, auth pages, `/espace-client` placeholder | Sign-up / login / verification / reset working |
-| 2 | Client side: `/ticket`, sign-up with draft, dashboard, thread | Clients submit and track tickets |
+| 2 | Client side: `/ticket`, sign-up with draft, dashboard, thread, `proxy.ts`, team notification emails, header link | Clients submit and track tickets |
 | 3 | Admin side: inbox, reply, status change | Full loop |
 | 4 | Email wiring, admin seed, polish | Feature complete |
 

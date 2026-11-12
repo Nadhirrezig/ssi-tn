@@ -6,6 +6,15 @@
 /** Where a signed-in client lands by default. */
 export const CLIENT_HOME = '/espace-client'
 
+export const NEW_TICKET_PATH = '/espace-client/tickets/nouveau'
+
+/**
+ * Where an email-verification link leads. /connexion forwards a signed-in
+ * visitor to `next` (the dashboard, with a welcome banner) and shows a clear
+ * message instead when the link has expired.
+ */
+export const VERIFY_CALLBACK_URL = `/connexion?next=${encodeURIComponent(`${CLIENT_HOME}?bienvenue=1`)}`
+
 /**
  * Better Auth error codes → French messages. Anything unmapped falls back to a
  * generic line rather than leaking an English library message into the UI.

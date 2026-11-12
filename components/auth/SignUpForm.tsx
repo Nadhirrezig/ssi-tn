@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { authClient } from '@/lib/auth-client'
-import { authErrorMessage } from '@/lib/auth-ui'
+import { authErrorMessage, VERIFY_CALLBACK_URL } from '@/lib/auth-ui'
 import { AUTH_LINK, Field, FormMessage, SubmitButton } from './fields'
 
 export default function SignUpForm() {
@@ -29,10 +29,7 @@ export default function SignUpForm() {
       name: String(form.get('name') ?? '').trim(),
       email,
       password,
-      // The verification link signs the client in and lands on /connexion,
-      // which forwards a signed-in visitor to their space — and shows a clear
-      // message instead when the link has expired.
-      callbackURL: '/connexion',
+      callbackURL: VERIFY_CALLBACK_URL,
     })
 
     setPending(false)

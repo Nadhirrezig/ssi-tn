@@ -29,6 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     })),
     {
+      url: `${SITE_URL}/ticket`,
+      lastModified,
+      changeFrequency: 'yearly' as const,
+      priority: 0.5,
+    },
+    {
       url: `${SITE_URL}/confidentialite`,
       lastModified,
       changeFrequency: 'yearly' as const,

@@ -11,6 +11,9 @@ import {
   resetPasswordMessage,
   verifyEmailMessage,
 } from '@/lib/emails/auth'
+import { notifyAdminNewTicket } from '@/lib/notifications'
+import { normalizeMessage, SIGN_UP_TICKET_FIELD, validateMessage } from '@/lib/ticket-status'
+import { createDraftTicket, submitDraftTickets } from '@/lib/tickets'
 
 /**
  * Better Auth — email/password accounts for the client ticket area.
@@ -51,6 +54,39 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24,
     sendVerificationEmail: async ({ user, url }) => {
       await sendMail(verifyEmailMessage(user, url))
+    },
+    // Confirming the address is what "validates" a ticket written before
+    // sign-up: its drafts are submitted and the team is told.
+    afterEmailVerification: async (user) => {
+      const submitted = await submitDraftTickets(user.id)
+      for (const ticket of submitted) {
+        after(() => notifyAdminNewTicket(ticket, user))
+      }
+    },
+  },
+
+  databaseHooks: {
+    user: {
+      create: {
+        // Runs once the new user row is committed — and only for a genuinely
+        // new account: signing up with an existing address creates no user,
+        // so no draft can be attached to someone else's account.
+        after: async (user, ctx) => {
+          if (ctx?.path !== '/sign-up/email') return
+          const raw: unknown = ctx.body?.[SIGN_UP_TICKET_FIELD]
+          if (typeof raw !== 'string') return
+
+          const message = normalizeMessage(raw)
+          if (validateMessage(message)) return // the form validates first; ignore junk
+
+          try {
+            await createDraftTicket(user.id, message)
+          } catch (error) {
+            // The account itself is fine; only the draft is lost. Log it.
+            console.error(`[tickets] could not save the sign-up draft for user ${user.id}:`, error)
+          }
+        },
+      },
     },
   },
 
