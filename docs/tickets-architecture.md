@@ -1,6 +1,6 @@
 # Client tickets — architecture
 
-> Status: agreed, not yet implemented. Phase 0 (Next 16 upgrade) in progress.
+> Status: Phase 0 (Next 16) and Phase 1 (database, auth, mailer) implemented. Phase 2 next.
 
 ## 1. Scope
 
@@ -89,7 +89,7 @@ Rules:
 | Model | Fields |
 |---|---|
 | `User` *(Better Auth)* | Better Auth fields + `role: CLIENT \| ADMIN` (default `CLIENT`) |
-| `Session`, `Account`, `Verification` | Better Auth's own tables |
+| `Session`, `Account`, `Verification`, `RateLimit` | Better Auth's own tables |
 | `Ticket` | `id`, `number` (autoincrement, unique), `userId`, `message`, `status`, `category?` *(future select)*, `submittedAt?`, `createdAt`, `updatedAt` |
 | `TicketMessage` | `id`, `ticketId`, `authorId`, `body`, `createdAt` |
 | `TicketEvent` | `id`, `ticketId`, `fromStatus`, `toStatus`, `actorId`, `createdAt` |
@@ -115,7 +115,8 @@ Rules:
 Access control:
 
 - `proxy.ts` (Next 16's replacement for `middleware.ts`) does an **optimistic** redirect when there is no session cookie on `/espace-client/**` and `/admin/**`.
-- The **real** check runs on the server in every page, layout and Server Action: valid session, right role, and (for clients) ownership of the ticket.
+- The **real** check runs on the server in every page, layout and Server Action: valid session, right role, and (for clients) ownership of the ticket. These go through `lib/session.ts` (`getSession`, `requireUser`, `requireAdmin`).
+- Login, sign-up and password-reset forms call Better Auth **from the browser** (`lib/auth-client.ts` → `/api/auth/*`), not through `auth.api` in Server Actions: Better Auth only applies rate limiting and origin checks to HTTP requests.
 
 ## 7. Server Actions
 
@@ -146,7 +147,9 @@ Access control:
 - No public admin sign-up: admin accounts are created by a seed script (`prisma/seed.ts`).
 - Clients can only read and reply to their own tickets, enforced in every query.
 - Message length capped (5,000 characters).
-- Better Auth's built-in rate limiting on auth endpoints.
+- Better Auth's built-in rate limiting on auth endpoints, stored in the database (`rate_limit` table) so every Vercel instance shares one counter.
+- Sign-up never reveals whether an address already has an account: the form answers the same way, and the real owner receives an "account already exists" email.
+- A password reset signs the user out of every other device.
 - Only one ticket per sign-up is accepted as a draft.
 
 ## 10. Environment variables
@@ -160,13 +163,29 @@ Access control:
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | cPanel SMTP |
 | `MAIL_FROM` | Sender, e.g. `SSI <support@ssi-tn.com>` |
 | `ADMIN_NOTIFY_EMAIL` | Where admin notifications go |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin (already used for SEO), printed in email footers |
+
+`.env.example` lists them all with where to find each value.
+
+### Local setup
+
+```bash
+cp .env.example .env.local   # then fill in the values
+pnpm install                 # also generates the Prisma client (lib/generated/, git-ignored)
+pnpm db:deploy               # applies prisma/migrations to the Neon database
+pnpm dev
+```
+
+Changing `prisma/schema.prisma` later: `pnpm db:migrate --name <change>` creates and applies a new migration.
+
+On Vercel: set the variables, and run `pnpm db:deploy` against production before (or as part of) the first deploy.
 
 ## 11. Build phases
 
 | # | Phase | Output |
 |---|---|---|
 | 0 | Upgrade to Next 16 + React 19, remove duplicate configs and the npm lockfile | Clean base |
-| 1 | Foundation: Prisma + Neon schema, Better Auth, `lib/mail.ts` | Sign-up / login / verification / reset working |
+| 1 | Foundation: Prisma + Neon schema, Better Auth, `lib/mail.ts`, auth pages, `/espace-client` placeholder | Sign-up / login / verification / reset working |
 | 2 | Client side: `/ticket`, sign-up with draft, dashboard, thread | Clients submit and track tickets |
 | 3 | Admin side: inbox, reply, status change | Full loop |
 | 4 | Email wiring, admin seed, polish | Feature complete |

@@ -25,3 +25,6 @@ next-env.d.ts
 
 
 /public/Template
+
+# prisma client (generated on install)
+/lib/generated/

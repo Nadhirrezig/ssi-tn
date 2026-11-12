@@ -1,3 +1,11 @@
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+
+# Install scripts pnpm is allowed to run:
+# - prisma, @prisma/engines: fetch the migration engine used by `prisma migrate`
+# - esbuild: native binary behind `tsx` (scripts such as the admin seed)
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - esbuild
+  - prisma

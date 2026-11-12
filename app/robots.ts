@@ -15,7 +15,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/'],
+        // The account area is private and noindex anyway; not crawling it
+        // spares requests that would only bounce to the login page.
+        disallow: ['/api/', '/espace-client', '/admin'],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
