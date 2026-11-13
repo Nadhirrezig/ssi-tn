@@ -6,6 +6,31 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes headset-ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(14deg);
+  }
+  30% {
+    transform: rotate(-14deg);
+  }
+  45% {
+    transform: rotate(12deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(6deg);
+  }
+  90% {
+    transform: rotate(-4deg);
+  }
+}
+
 /* Anchor targets clear the fixed header (h-20) */
 section[id] {
   scroll-margin-top: 5.5rem;
