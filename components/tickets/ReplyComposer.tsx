@@ -4,7 +4,18 @@ import { startTransition, useActionState, useState, type FormEvent } from 'react
 import MessageTextarea from './MessageTextarea'
 import { FormMessage } from '@/components/auth/fields'
 import type { FormState } from '@/app/espace-client/actions'
+import Dropdown from './Dropdown'
+import { StatusDot } from './StatusBadge'
 import { STATUS_META, type TicketStatus } from '@/lib/ticket-status'
+
+/** One line per target status, so the consequence is clear before sending. */
+const STATUS_HINT: Record<TicketStatus, string> = {
+  PENDING: 'Remet la demande en attente',
+  CONFIRMED: 'Prise en charge confirmée au client',
+  IN_PROGRESS: 'Intervention en cours',
+  DONE: 'Clôt la demande — travail terminé',
+  REJECTED: 'Clôt la demande sans suite',
+}
 
 type Props = {
   action: (prev: FormState, formData: FormData) => Promise<FormState>
@@ -88,25 +99,31 @@ function ReplyForm({
           they share one line. */}
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         {nextStatuses?.length ? (
-          <label className="flex flex-col gap-1.5 text-sm text-slatebody sm:flex-row sm:items-center sm:gap-2">
-            <span className="font-heading font-bold text-navy">Après envoi :</span>
-            <select
+          <div className="flex flex-col gap-1.5 text-sm sm:flex-row sm:items-center sm:gap-2">
+            <span aria-hidden="true" className="font-heading font-bold text-navy">Après envoi :</span>
+            <Dropdown
               name="nextStatus"
+              label="Statut après envoi"
               value={nextStatus}
-              onChange={(e) => setNextStatus(e.target.value as TicketStatus | '')}
+              onChange={setNextStatus}
               disabled={pending}
-              className="w-full rounded-full border border-black/10 bg-white py-2.5 pl-4 pr-9 font-heading text-sm font-bold text-navy focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-auto sm:py-2"
-            >
-              <option value="">
-                {currentStatus ? `Garder « ${STATUS_META[currentStatus].label} »` : 'Statut inchangé'}
-              </option>
-              {nextStatuses.map((status) => (
-                <option key={status} value={status}>
-                  Passer à « {STATUS_META[status].label} »
-                </option>
-              ))}
-            </select>
-          </label>
+              className="w-full sm:w-64"
+              options={[
+                {
+                  value: '' as const,
+                  label: currentStatus ? `Garder « ${STATUS_META[currentStatus].label} »` : 'Statut inchangé',
+                  hint: 'Le statut ne change pas',
+                  icon: currentStatus ? <StatusDot status={currentStatus} size="md" /> : null,
+                },
+                ...nextStatuses.map((status) => ({
+                  value: status,
+                  label: `Passer à « ${STATUS_META[status].label} »`,
+                  hint: STATUS_HINT[status],
+                  icon: <StatusDot status={status} size="md" />,
+                })),
+              ]}
+            />
+          </div>
         ) : (
           <p className="text-xs text-slatebody">
             {hint}

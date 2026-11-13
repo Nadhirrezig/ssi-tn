@@ -14,6 +14,16 @@ const TONE: Record<TicketStatus, { tint: string; dot: string }> = {
   REJECTED: { tint: 'bg-accentCoral/10', dot: 'bg-accentCoral' },
 }
 
+/** The status colour on its own — for menus and compact lists. Decorative. */
+export function StatusDot({ status, size = 'sm' }: { status: TicketStatus; size?: 'sm' | 'md' }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`shrink-0 rounded-full ${size === 'md' ? 'h-2.5 w-2.5' : 'h-1.5 w-1.5'} ${TONE[status].dot}`}
+    />
+  )
+}
+
 export default function StatusBadge({ status }: { status: TicketStatus }) {
   const tone = TONE[status]
   return (
