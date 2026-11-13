@@ -189,23 +189,38 @@ Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket 
 
 ## 10. Environment variables
 
-| Name | Purpose |
-|---|---|
-| `DATABASE_URL` | Neon pooled connection string |
-| `DIRECT_URL` | Neon direct connection string (migrations) |
-| `BETTER_AUTH_SECRET` | Session signing secret |
-| `BETTER_AUTH_URL` | Public site URL |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | cPanel SMTP |
-| `MAIL_FROM` | Sender, e.g. `SSI <support@ssi-tn.com>` |
-| `ADMIN_NOTIFY_EMAIL` | Where admin notifications go |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin (already used for SEO), printed in email footers |
+| Name | Purpose | Where to find it |
+|---|---|---|
+| `DATABASE_URL` | Neon pooled connection string | Neon → Connect, *Connection pooling* on (host contains `-pooler`) |
+| `DIRECT_URL` | Neon direct connection string (migrations) | The same link with `-pooler` removed (or pooling switched off) |
+| `BETTER_AUTH_SECRET` | Session signing secret | Generate: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` — one per environment |
+| `BETTER_AUTH_URL` | Public site URL | `http://localhost:3000` locally, `https://ssi-tn.com` in production |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | cPanel SMTP | cPanel → Email Accounts → Connect Devices (port 465) |
+| `MAIL_FROM` | Sender, e.g. `SSI <support@ssi-tn.com>` | Same mailbox as `SMTP_USER` |
+| `ADMIN_NOTIFY_EMAIL` | Where admin notifications go | The team inbox |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin (already used for SEO), printed in email footers | `http://localhost:3000` locally; optional in production (defaults to `https://ssi-tn.com`) |
 
-`.env.example` lists them all with where to find each value.
+Real values live only in `.env.local` (git-ignored) and in Vercel → Settings → Environment Variables — never in a committed file. Any non-Neon `DATABASE_URL` (local Postgres) works too, see *Local development without Neon*.
 
 ### Local setup
 
+Create `.env.local` at the project root with these names, then fill in the values:
+
 ```bash
-cp .env.example .env.local   # then fill in the values
+DATABASE_URL=""
+DIRECT_URL=""
+BETTER_AUTH_SECRET=""
+BETTER_AUTH_URL="http://localhost:3000"
+SMTP_HOST=""
+SMTP_PORT="465"
+SMTP_USER=""
+SMTP_PASS=""
+MAIL_FROM=""
+ADMIN_NOTIFY_EMAIL=""
+NEXT_PUBLIC_SITE_URL="http://localhost:3000"
+```
+
+```bash
 pnpm install                 # also generates the Prisma client (lib/generated/, git-ignored)
 pnpm db:deploy               # applies prisma/migrations to the Neon database
 pnpm dev
