@@ -25,6 +25,7 @@
     "better-auth": "1.7.22",
     "crypto": "^1.0.1",
     "framer-motion": "^12.40.0",
+    "lucide-react": "^1.72.0",
     "next": "16.4.6",
     "nodemailer": "^10.5.0",
     "react": "^19.3.1",
