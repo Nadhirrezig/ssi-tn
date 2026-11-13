@@ -15,7 +15,7 @@ import type { TicketStatus } from '@/lib/ticket-status'
  */
 
 type Person = { name: string; email: string }
-type TicketRef = { ref: string; message: string; category?: string | null }
+type TicketRef = { ref: string; message: string; createdAt: Date; category?: string | null; status?: TicketStatus }
 
 // ─── To the team ────────────────────────────────────────────────────────────
 
@@ -30,21 +30,16 @@ export async function notifyAdminNewTicket(ticket: TicketRef, client: Person) {
   if (to) await sendMail(newTicketAdminMessage(to, ticket, client))
 }
 
-export async function notifyAdminClientReply(ticket: TicketRef, client: Person, reply: string) {
+export async function notifyAdminClientReply(ticket: TicketRef, client: Person) {
   const to = adminInbox()
-  if (to) await sendMail(clientReplyAdminMessage(to, ticket, client, reply))
+  if (to) await sendMail(clientReplyAdminMessage(to, ticket, client))
 }
 
 // ─── To the client ──────────────────────────────────────────────────────────
 
 /** One email for a reply, even when it also changed the status. */
-export async function notifyClientTeamReply(
-  ticket: TicketRef,
-  client: Person,
-  reply: string,
-  newStatus: TicketStatus | null
-) {
-  await sendMail(teamReplyClientMessage(client, ticket, reply, newStatus))
+export async function notifyClientTeamReply(ticket: TicketRef, client: Person, newStatus: TicketStatus | null) {
+  await sendMail(teamReplyClientMessage(client, ticket, newStatus))
 }
 
 export async function notifyClientStatusChange(ticket: TicketRef, client: Person, newStatus: TicketStatus) {

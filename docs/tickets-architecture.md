@@ -172,6 +172,8 @@ Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket 
 | Status changed | Client | Server Action |
 
 - Sent from `lib/mail.ts` (one Nodemailer transport) with French HTML templates in `lib/emails/`.
+- One layout for every email (`lib/emails/layout.ts`): SSI logo and tagline, round icon, headline, greeting, a details card (ticket number, date, status pill), one button, sign-off, navy contact band. The logo and Lucide icons are PNGs sent as inline attachments (`cid:`), so they show even where remote images are blocked; `lib/emails/images.ts` attaches only the ones a message uses.
+- Ticket emails never contain the conversation: they say what happened and link to the ticket. The client reads and replies in the client area, behind their login.
 - Sent after the response with Next's `after()`, so a slow SMTP server never blocks the page. Failures are logged.
 - All user text is HTML-escaped before it goes into a template.
 - Prerequisites on the `ssi-tn.com` domain: **SPF, DKIM and DMARC**, otherwise mail lands in spam. Check the cPanel **hourly send limit**.

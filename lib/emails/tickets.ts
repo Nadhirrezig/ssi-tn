@@ -1,12 +1,37 @@
 import 'server-only'
 
 import type { MailMessage } from '@/lib/mail'
-import { renderEmail } from '@/lib/emails/layout'
+import { renderEmail, type DetailRow, type PillTone } from '@/lib/emails/layout'
 import { SITE_URL } from '@/lib/site'
-import { categoryOf, STATUS_META, TICKET_CATEGORIES, ticketTitle, type TicketStatus } from '@/lib/ticket-status'
+import {
+  categoryOf,
+  formatDateAt,
+  STATUS_META,
+  TICKET_CATEGORIES,
+  ticketTitle,
+  type TicketStatus,
+} from '@/lib/ticket-status'
 
-type Client = { name: string; email: string }
-type TicketRef = { ref: string; message: string; category?: string | null }
+type Person = { name: string; email: string }
+/** `status` is the ticket's status before the change being announced. */
+type TicketRef = {
+  ref: string
+  message: string
+  createdAt: Date
+  category?: string | null
+  status?: TicketStatus
+}
+
+/*
+ * Ticket emails say what happened and link to the ticket; they never carry
+ * the conversation itself. The client reads and answers in the client area,
+ * behind their login — the full history stays in one place, and nothing
+ * sensitive sits in an inbox.
+ */
+
+const firstName = (name: string) => name.trim().split(/\s+/)[0] || name
+const adminUrl = (ref: string) => `${SITE_URL}/admin/tickets/${ref}`
+const clientUrl = (ref: string) => `${SITE_URL}/espace-client/tickets/${ref}`
 
 /** "demande", or "demande de devis" / "demande de démo" for tagged tickets. */
 function kindOf(ticket: TicketRef): string {
@@ -14,96 +39,117 @@ function kindOf(ticket: TicketRef): string {
   return category ? `demande de ${TICKET_CATEGORIES[category].tag.toLowerCase()}` : 'demande'
 }
 
-/** Long messages are cut in emails; the full text is one click away. */
-function excerpt(text: string, max = 1200): string {
-  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text
+const title = (ticket: TicketRef) => `« ${ticketTitle(ticket.message, 70)} »`
+const quoted = (label: string) => `« ${label} »`
+
+/** Same colour per status as the badges on the site. */
+const STATUS_PILL: Record<TicketStatus, PillTone> = {
+  PENDING: 'yellow',
+  CONFIRMED: 'blue',
+  IN_PROGRESS: 'blue',
+  DONE: 'navy',
+  REJECTED: 'coral',
 }
 
-const adminUrl = (ref: string) => `${SITE_URL}/admin/tickets/${ref}`
-const clientUrl = (ref: string) => `${SITE_URL}/espace-client/tickets/${ref}`
+/** The details card: number, (client), creation date, current status. */
+function detailsOf(ticket: TicketRef, status: TicketStatus, client?: Person): DetailRow[] {
+  return [
+    { icon: 'ticket', label: 'Numéro de ticket', value: ticket.ref },
+    ...(client ? [{ icon: 'user' as const, label: 'Client', value: `${client.name} · ${client.email}` }] : []),
+    { icon: 'calendar', label: 'Date de création', value: formatDateAt(ticket.createdAt) },
+    { pill: STATUS_PILL[status], label: 'Statut actuel', value: STATUS_META[status].label },
+  ]
+}
 
-const REPLY_IN_PORTAL =
-  'Pour répondre, utilisez votre espace client : l’historique complet de la demande y est conservé.'
+/** Headline per status: each step forward reads as good news. */
+const STATUS_HEADING: Record<TicketStatus, string> = {
+  PENDING: 'Votre demande a bien été enregistrée',
+  CONFIRMED: 'Votre demande est prise en charge',
+  IN_PROGRESS: 'Nos équipes sont à pied d’œuvre',
+  DONE: 'C’est fait : votre demande est traitée',
+  REJECTED: 'Votre demande a été annulée',
+}
 
 // ─── To the client ──────────────────────────────────────────────────────────
 
 /** The team replied — with the new status when the reply also moved it. */
 export function teamReplyClientMessage(
-  client: Client,
+  client: Person,
   ticket: TicketRef,
-  reply: string,
   newStatus: TicketStatus | null
 ): MailMessage {
+  const status = newStatus ?? ticket.status ?? 'PENDING'
   return {
     to: client.email,
-    subject: `[${ticket.ref}] Nouvelle réponse de l’équipe SSI`,
+    subject: `[${ticket.ref}] L’équipe SSI vous a répondu`,
     ...renderEmail({
-      preheader: excerpt(reply, 120),
-      heading: `Bonjour ${client.name},`,
+      preheader: 'Une nouvelle réponse vous attend dans votre espace client.',
+      tone: 'info',
+      heading: 'Notre équipe vous a répondu',
+      greeting: `Bonjour ${firstName(client.name)},`,
       paragraphs: [
-        `Notre équipe a répondu à votre demande ${ticket.ref} « ${ticketTitle(ticket.message, 70)} » :`,
-        excerpt(reply),
-        ...(newStatus
-          ? [`Statut de la demande : ${STATUS_META[newStatus].label}. ${STATUS_META[newStatus].description}`]
-          : []),
+        `Notre équipe a répondu à votre ${kindOf(ticket)} ${title(ticket)}.${
+          newStatus ? ` Elle est désormais ${quoted(STATUS_META[newStatus].label)}.` : ''
+        } Pour lire sa réponse et y donner suite, rendez-vous dans votre espace client.`,
       ],
-      action: { label: 'Voir la demande', url: clientUrl(ticket.ref) },
-      footnote: REPLY_IN_PORTAL,
+      details: detailsOf(ticket, status),
+      action: { label: 'Voir ma demande', url: clientUrl(ticket.ref) },
     }),
   }
 }
 
 /** Status moved without a message. */
 export function statusChangeClientMessage(
-  client: Client,
+  client: Person,
   ticket: TicketRef,
   newStatus: TicketStatus
 ): MailMessage {
   const { label, description } = STATUS_META[newStatus]
   return {
     to: client.email,
-    subject: `[${ticket.ref}] Votre demande est maintenant « ${label} »`,
+    subject: `[${ticket.ref}] Votre demande est maintenant ${quoted(label)}`,
     ...renderEmail({
       preheader: description,
-      heading: `Bonjour ${client.name},`,
-      paragraphs: [
-        `Le statut de votre demande ${ticket.ref} « ${ticketTitle(ticket.message, 70)} » est passé à « ${label} ».`,
-        description,
-      ],
-      action: { label: 'Voir la demande', url: clientUrl(ticket.ref) },
-      footnote: REPLY_IN_PORTAL,
+      tone: newStatus === 'REJECTED' ? 'neutral' : 'success',
+      heading: STATUS_HEADING[newStatus],
+      greeting: `Bonjour ${firstName(client.name)},`,
+      paragraphs: [`Le statut de votre ${kindOf(ticket)} ${title(ticket)} est passé à ${quoted(label)}. ${description}`],
+      details: detailsOf(ticket, newStatus),
+      action: { label: 'Voir ma demande', url: clientUrl(ticket.ref) },
     }),
   }
 }
 
 // ─── To the team ────────────────────────────────────────────────────────────
 
-export function newTicketAdminMessage(to: string, ticket: TicketRef, client: Client): MailMessage {
+export function newTicketAdminMessage(to: string, ticket: TicketRef, client: Person): MailMessage {
+  const kind = kindOf(ticket)
   return {
     to,
-    subject: `[${ticket.ref}] Nouvelle ${kindOf(ticket)} — ${ticketTitle(ticket.message, 60)}`,
+    subject: `[${ticket.ref}] Nouvelle ${kind} — ${ticketTitle(ticket.message, 60)}`,
     ...renderEmail({
-      preheader: `${client.name} a ouvert une ${kindOf(ticket)}.`,
-      heading: `Nouvelle ${kindOf(ticket)} ${ticket.ref}`,
-      paragraphs: [`De : ${client.name} <${client.email}>`, excerpt(ticket.message)],
+      preheader: `${client.name} a ouvert une ${kind}.`,
+      tone: 'info',
+      heading: `Nouvelle ${kind}`,
+      greeting: 'Bonjour,',
+      paragraphs: [`${client.name} vient d’ouvrir une ${kind} : ${title(ticket)}. Elle attend sa prise en charge.`],
+      details: detailsOf(ticket, ticket.status ?? 'PENDING', client),
       action: { label: 'Ouvrir la demande', url: adminUrl(ticket.ref) },
     }),
   }
 }
 
-export function clientReplyAdminMessage(
-  to: string,
-  ticket: TicketRef,
-  client: Client,
-  reply: string
-): MailMessage {
+export function clientReplyAdminMessage(to: string, ticket: TicketRef, client: Person): MailMessage {
   return {
     to,
     subject: `[${ticket.ref}] Nouvelle réponse du client — ${ticketTitle(ticket.message, 60)}`,
     ...renderEmail({
       preheader: `${client.name} a répondu sur ${ticket.ref}.`,
-      heading: `Réponse sur ${ticket.ref}`,
-      paragraphs: [`De : ${client.name} <${client.email}>`, excerpt(reply)],
+      tone: 'info',
+      heading: `${firstName(client.name)} a répondu`,
+      greeting: 'Bonjour,',
+      paragraphs: [`${client.name} a ajouté un message à la ${kindOf(ticket)} ${title(ticket)}.`],
+      details: detailsOf(ticket, ticket.status ?? 'PENDING', client),
       action: { label: 'Ouvrir la demande', url: adminUrl(ticket.ref) },
     }),
   }

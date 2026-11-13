@@ -1,6 +1,7 @@
 import 'server-only'
 
 import nodemailer, { type Transporter } from 'nodemailer'
+import { inlineImages } from '@/lib/emails/images'
 
 /** A rendered message, ready to send. Templates in lib/emails build these. */
 export type MailMessage = {
@@ -60,7 +61,8 @@ export async function sendMail(message: MailMessage): Promise<void> {
   if (!from) throw new Error('MAIL_FROM is not set — expected e.g. "SSI <support@ssi-tn.com>".')
 
   try {
-    await getTransport().sendMail({ from, ...message })
+    // Templates show the logo and icons through cid: — attach the ones used.
+    await getTransport().sendMail({ from, ...message, attachments: inlineImages(message.html) })
   } catch (error) {
     console.error(`[mail] failed to send "${message.subject}" to ${message.to}:`, error)
     throw error

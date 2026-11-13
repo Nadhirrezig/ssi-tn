@@ -63,10 +63,13 @@ const DATE_TIME = new Intl.DateTimeFormat('fr-FR', {
   timeStyle: 'short',
   timeZone: TIME_ZONE,
 })
+const TIME = new Intl.DateTimeFormat('fr-FR', { timeStyle: 'short', timeZone: TIME_ZONE })
 const YEAR = new Intl.DateTimeFormat('en-US', { year: 'numeric', timeZone: TIME_ZONE })
 
 export const formatDate = (date: Date) => DATE.format(date)
 export const formatDateTime = (date: Date) => DATE_TIME.format(date)
+/** "13 nov. 2026 à 14:32" — the long form, for emails. */
+export const formatDateAt = (date: Date) => `${DATE.format(date)} à ${TIME.format(date)}`
 
 // ─── References ─────────────────────────────────────────────────────────────
 

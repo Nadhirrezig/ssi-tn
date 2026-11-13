@@ -56,7 +56,7 @@ export async function replyToTicketAction(
 
   try {
     const { ticket } = await addClientReply(user.id, ticketId, body)
-    after(() => notifyAdminClientReply(ticket, user, body))
+    after(() => notifyAdminClientReply(ticket, user))
   } catch (error) {
     if (error instanceof TicketError) return { ...keep, error: error.message }
     console.error('[tickets] addClientReply failed:', error)

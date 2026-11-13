@@ -41,7 +41,7 @@ export async function adminReplyAction(
 
   try {
     const { ticket, newStatus } = await addAdminReply(admin.id, ticketId, body, nextStatus)
-    after(() => notifyClientTeamReply(ticket, ticket.user, body, newStatus))
+    after(() => notifyClientTeamReply(ticket, ticket.user, newStatus))
   } catch (error) {
     if (error instanceof TicketError) return { ...keep, error: error.message }
     console.error('[admin] addAdminReply failed:', error)
