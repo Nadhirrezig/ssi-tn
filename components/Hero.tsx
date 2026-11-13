@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
+import { QUOTE_HREF } from '@/lib/ticket-status'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -49,13 +50,13 @@ export default function Hero() {
 
           <motion.div variants={item} className="mt-9 flex flex-wrap items-center gap-4">
             <Link
-              href="#contact"
+              href={QUOTE_HREF}
               className="rounded-full bg-primary px-8 py-4 font-heading text-base font-bold text-white shadow-float transition hover:bg-primary-700"
             >
               Demander un devis
             </Link>
             <Link
-              href="#contact"
+              href="#services"
               className="group inline-flex items-center gap-2 rounded-full border border-black/10 px-7 py-4 font-heading text-base font-bold text-navy transition hover:border-primary hover:text-primary"
             >
               Découvrir nos services

@@ -5,7 +5,7 @@ import MessageTextarea from './MessageTextarea'
 import { FormMessage, SubmitButton } from '@/components/auth/fields'
 import { createTicketAction } from '@/app/espace-client/actions'
 import { clearDraft, loadDraft, saveDraft } from '@/lib/ticket-draft'
-import { validateMessage } from '@/lib/ticket-status'
+import { TICKET_CATEGORIES, validateMessage, type TicketCategory } from '@/lib/ticket-status'
 import { useIsClient } from '@/lib/use-is-client'
 
 const PLACEHOLDER =
@@ -18,12 +18,12 @@ const PLACEHOLDER =
  * The draft lives in localStorage, which the server cannot see, so the editor
  * renders after hydration; a same-size placeholder holds its place until then.
  */
-export default function NewTicketForm() {
+export default function NewTicketForm({ category = null }: { category?: TicketCategory | null }) {
   const isClient = useIsClient()
-  return isClient ? <Editor /> : <EditorPlaceholder />
+  return isClient ? <Editor category={category} /> : <EditorPlaceholder />
 }
 
-function Editor() {
+function Editor({ category }: { category: TicketCategory | null }) {
   const [state, formAction, pending] = useActionState(createTicketAction, undefined)
   const [initialDraft] = useState(loadDraft)
   const [message, setMessage] = useState(initialDraft)
@@ -54,6 +54,8 @@ function Editor() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
+      {/* Set by the quote / demo entry points (?objet=…); the server re-validates it. */}
+      {category ? <input type="hidden" name="category" value={category} /> : null}
       <MessageLabel />
       <div>
         <MessageTextarea
@@ -62,7 +64,7 @@ function Editor() {
           rows={9}
           value={message}
           onValueChange={onChange}
-          placeholder={PLACEHOLDER}
+          placeholder={category ? TICKET_CATEGORIES[category].placeholder : PLACEHOLDER}
           aria-describedby="message-help"
           required
           readOnly={pending}

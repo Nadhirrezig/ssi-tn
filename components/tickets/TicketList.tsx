@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import StatusBadge from './StatusBadge'
+import CategoryTag from '@/components/tickets/CategoryTag'
 import type { ClientTicketSummary } from '@/lib/tickets'
 import { formatDate, isFinalStatus, ticketTitle } from '@/lib/ticket-status'
 
@@ -33,7 +34,10 @@ export default function TicketList({ tickets }: { tickets: ClientTicketSummary[]
                 {/* Phones: reference and status share the top line, so the
                     title below gets the full width instead of a few words. */}
                 <div className="flex items-center justify-between gap-3 sm:justify-start">
-                  <span className="font-mono text-xs text-primary">{ticket.ref}</span>
+                  <span className="flex items-center gap-2">
+                    <span className="font-mono text-xs text-primary">{ticket.ref}</span>
+                    <CategoryTag category={ticket.category} />
+                  </span>
                   <span className="sm:hidden">
                     <StatusBadge status={ticket.status} />
                   </span>

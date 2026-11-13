@@ -3,6 +3,7 @@ import PageBand from '@/components/tickets/PageBand'
 import NewTicketForm from '@/components/tickets/NewTicketForm'
 import HelpCard from '@/components/tickets/HelpCard'
 import { requireUser } from '@/lib/session'
+import { parseCategory, TICKET_CATEGORIES } from '@/lib/ticket-status'
 
 export const metadata: Metadata = { title: 'Nouvelle demande' }
 
@@ -14,21 +15,29 @@ const TIPS = [
   { title: 'Ce qui a été tenté', text: 'Redémarrage, autre poste, autre connexion… tout nous fait gagner du temps.' },
 ]
 
-export default async function NouvelleDemandePage() {
+export default async function NouvelleDemandePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ objet?: string | string[] }>
+}) {
   await requireUser()
+  // Quote and demo buttons arrive here as ?objet=devis / ?objet=demo.
+  const { objet } = await searchParams
+  const category = parseCategory(Array.isArray(objet) ? objet[0] : objet)
+  const copy = category ? TICKET_CATEGORIES[category] : null
 
   return (
     <>
       <PageBand
-        eyebrow="Nouvelle demande"
-        title="Décrivez votre besoin"
-        lead="Un incident, une question ou un projet : notre équipe qualifie votre demande et vous répond dans votre espace client."
+        eyebrow={copy?.eyebrow ?? "Nouvelle demande"}
+        title={copy?.title ?? "Décrivez votre besoin"}
+        lead={copy?.lead ?? "Un incident, une question ou un projet : notre équipe qualifie votre demande et vous répond dans votre espace client."}
       />
 
       <div className="mx-auto max-w-content px-6 py-8 sm:py-14">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
           <div className="rounded-[24px] border border-black/5 bg-white p-5 shadow-card sm:rounded-[28px] sm:p-8">
-            <NewTicketForm />
+            <NewTicketForm category={category} />
           </div>
 
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">

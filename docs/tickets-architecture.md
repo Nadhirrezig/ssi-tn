@@ -93,7 +93,7 @@ Rules:
 |---|---|
 | `User` *(Better Auth)* | Better Auth fields + `role: CLIENT \| ADMIN` (default `CLIENT`) |
 | `Session`, `Account`, `Verification`, `RateLimit` | Better Auth's own tables |
-| `Ticket` | `id`, `number` (autoincrement, unique), `userId`, `message`, `status`, `category?` *(future select)*, `submittedAt?`, `createdAt`, `updatedAt` |
+| `Ticket` | `id`, `number` (autoincrement, unique), `userId`, `message`, `status`, `category?` (`DEVIS`, `DEMO`, or null — see below), `submittedAt?`, `createdAt`, `updatedAt` |
 | `TicketMessage` | `id`, `ticketId`, `authorId`, `body`, `createdAt` |
 | `TicketEvent` | `id`, `ticketId`, `fromStatus`, `toStatus`, `actorId`, `createdAt` |
 
@@ -129,6 +129,15 @@ Patterns taken from established service portals (Jira Service Management, Freshd
 - **Ticket page**: heading with reference + status, a segmented progress bar with one sentence answering "what happens now?", the conversation as a single timeline (request, replies, status changes inline), a details panel and an urgent-phone card.
 - **Status badges**: one meaning, one colour, everywhere; navy text on a light tint from the existing palette (AA contrast).
 - Files: `components/tickets/*`, `app/espace-client/*`, `app/ticket/page.tsx`.
+
+### Quote and demo requests
+
+The site's quote buttons ("Devis gratuit" in the header, "Demander un devis" in the hero, mobile menu, Solutions menu and blue CTA band) open `/ticket?objet=devis`; "Demander une démo" on the solution pages opens `/ticket?objet=demo`.
+
+- The page heading, intro and example text follow the category (`TICKET_CATEGORIES` in `lib/ticket-status.ts`).
+- The ticket is stored with `category = DEVIS | DEMO` — through the sign-up request (`ticketCategory` field, read by the user-creation hook) or a hidden field in the client-area form (`/espace-client/tickets/nouveau?objet=…`). The server re-validates the value; anything unknown means no category.
+- A "Devis" / "Démo" tag shows in the client list, the admin inbox and both ticket pages; the team email reads "Nouvelle demande de devis / de démo".
+- When the fixed-choice select arrives, its values join the same map.
 
 ### Admin UI (Phase 3)
 

@@ -12,7 +12,13 @@ import {
   verifyEmailMessage,
 } from '@/lib/emails/auth'
 import { notifyAdminNewTicket } from '@/lib/notifications'
-import { normalizeMessage, SIGN_UP_TICKET_FIELD, validateMessage } from '@/lib/ticket-status'
+import {
+  normalizeMessage,
+  parseCategory,
+  SIGN_UP_CATEGORY_FIELD,
+  SIGN_UP_TICKET_FIELD,
+  validateMessage,
+} from '@/lib/ticket-status'
 import { createDraftTicket, submitDraftTickets } from '@/lib/tickets'
 
 /**
@@ -80,7 +86,8 @@ export const auth = betterAuth({
           if (validateMessage(message)) return // the form validates first; ignore junk
 
           try {
-            await createDraftTicket(user.id, message)
+            // Quote / demo buttons tag the request; anything unknown is ignored.
+            await createDraftTicket(user.id, message, parseCategory(ctx.body?.[SIGN_UP_CATEGORY_FIELD]))
           } catch (error) {
             // The account itself is fine; only the draft is lost. Log it.
             console.error(`[tickets] could not save the sign-up draft for user ${user.id}:`, error)

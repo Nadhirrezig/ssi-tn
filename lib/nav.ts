@@ -8,7 +8,7 @@
  */
 
 /** The nav items that actually carry a panel (see `NAV` in Header). */
-export type NavPanelId = 'solutions' | 'realisations'
+export type NavPanelId = 'solutions'
 
 export const OPEN_PANEL_EVENT = 'ssi:open-nav-panel'
 

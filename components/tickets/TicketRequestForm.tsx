@@ -7,7 +7,13 @@ import { AUTH_LINK, Field, FormMessage, SubmitButton } from '@/components/auth/f
 import { authClient } from '@/lib/auth-client'
 import { authErrorMessage, NEW_TICKET_PATH, VERIFY_CALLBACK_URL } from '@/lib/auth-ui'
 import { loadDraft, saveDraft } from '@/lib/ticket-draft'
-import { SIGN_UP_TICKET_FIELD, validateMessage } from '@/lib/ticket-status'
+import {
+  SIGN_UP_CATEGORY_FIELD,
+  SIGN_UP_TICKET_FIELD,
+  TICKET_CATEGORIES,
+  validateMessage,
+  type TicketCategory,
+} from '@/lib/ticket-status'
 import { useIsClient } from '@/lib/use-is-client'
 
 type Mode = 'new' | 'existing'
@@ -27,12 +33,16 @@ const PLACEHOLDER =
  * The text is saved locally as it is typed (lib/ticket-draft), so a detour —
  * password reset, closed tab — does not lose it.
  */
-export default function TicketRequestForm() {
+export default function TicketRequestForm({ category = null }: { category?: TicketCategory | null }) {
   const isClient = useIsClient()
-  return isClient ? <RequestForm /> : <RequestFormPlaceholder />
+  return isClient ? <RequestForm category={category} /> : <RequestFormPlaceholder />
 }
 
-function RequestForm() {
+function RequestForm({ category }: { category: TicketCategory | null }) {
+  // Existing clients finish on the client-area form, tagged the same way.
+  const newTicketHref = category
+    ? `${NEW_TICKET_PATH}?objet=${TICKET_CATEGORIES[category].param}`
+    : NEW_TICKET_PATH
   const [message, setMessage] = useState(loadDraft)
   const [mode, setMode] = useState<Mode>('new')
   const [pending, setPending] = useState(false)
@@ -77,6 +87,7 @@ function RequestForm() {
         password,
         callbackURL: VERIFY_CALLBACK_URL,
         [SIGN_UP_TICKET_FIELD]: text,
+        ...(category ? { [SIGN_UP_CATEGORY_FIELD]: category } : {}),
       }
       const { error } = await authClient.signUp.email(body)
       setPending(false)
@@ -95,7 +106,7 @@ function RequestForm() {
     const { error } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: NEW_TICKET_PATH,
+      callbackURL: newTicketHref,
     })
     if (error) {
       setNotice({
@@ -106,7 +117,7 @@ function RequestForm() {
     }
   }
 
-  if (sentTo) return <CheckInbox email={sentTo} />
+  if (sentTo) return <CheckInbox email={sentTo} newTicketHref={newTicketHref} />
 
   return (
     <form onSubmit={onSubmit} className="space-y-10">
@@ -122,7 +133,7 @@ function RequestForm() {
           rows={8}
           value={message}
           onValueChange={onMessageChange}
-          placeholder={PLACEHOLDER}
+          placeholder={category ? TICKET_CATEGORIES[category].placeholder : PLACEHOLDER}
           aria-labelledby="step-request"
           aria-describedby="message-help"
           required
@@ -249,7 +260,7 @@ function Step({ number, title, id }: { number: number; title: string; id: string
   )
 }
 
-function CheckInbox({ email }: { email: string }) {
+function CheckInbox({ email, newTicketHref }: { email: string; newTicketHref: string }) {
   return (
     <div role="status" className="py-4 text-center">
       <span aria-hidden="true" className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-primary-50 text-primary">
@@ -265,7 +276,7 @@ function CheckInbox({ email }: { email: string }) {
       </p>
       <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-slatebody">
         Rien reçu ? Vérifiez vos courriers indésirables. Si vous aviez déjà un espace client,{' '}
-        <Link href={`/connexion?next=${encodeURIComponent(NEW_TICKET_PATH)}`} className={AUTH_LINK}>
+        <Link href={`/connexion?next=${encodeURIComponent(newTicketHref)}`} className={AUTH_LINK}>
           connectez-vous
         </Link>{' '}
         : votre demande vous y attendra.

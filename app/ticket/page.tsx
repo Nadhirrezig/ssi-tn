@@ -6,12 +6,32 @@ import HelpCard from '@/components/tickets/HelpCard'
 import TicketRequestForm from '@/components/tickets/TicketRequestForm'
 import { NEW_TICKET_PATH } from '@/lib/auth-ui'
 import { getSession } from '@/lib/session'
+import { parseCategory, TICKET_CATEGORIES } from '@/lib/ticket-status'
 
-export const metadata: Metadata = {
+type Props = { searchParams: Promise<{ objet?: string | string[] }> }
+
+const DEFAULT_COPY = {
+  eyebrow: 'Assistance',
   title: 'Soumettre une demande',
-  description:
-    'Un incident, une question ou un projet informatique ? Décrivez votre besoin : l’équipe SSI qualifie votre demande et vous répond dans votre espace client.',
-  alternates: { canonical: '/ticket' },
+  lead: 'Un incident, une question ou un projet : décrivez-le, notre équipe s’en charge et vous tient informé à chaque étape.',
+}
+
+/** ?objet=devis or ?objet=demo, as set by the quote and demo buttons. */
+async function categoryFrom(searchParams: Props['searchParams']) {
+  const { objet } = await searchParams
+  return parseCategory(Array.isArray(objet) ? objet[0] : objet)
+}
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const category = await categoryFrom(searchParams)
+  return {
+    title: category ? TICKET_CATEGORIES[category].title : DEFAULT_COPY.title,
+    description: category
+      ? TICKET_CATEGORIES[category].lead
+      : 'Un incident, une question ou un projet informatique ? Décrivez votre besoin : l’équipe SSI qualifie votre demande et vous répond dans votre espace client.',
+    // One canonical page: the quote and demo variants are the same form.
+    alternates: { canonical: '/ticket' },
+  }
 }
 
 /** What happens after sending — numbered, in the site's editorial style. */
@@ -31,10 +51,15 @@ const STEPS = [
   },
 ]
 
-export default async function TicketPage() {
+export default async function TicketPage({ searchParams }: Props) {
+  const category = await categoryFrom(searchParams)
+  const copy = category ? TICKET_CATEGORIES[category] : DEFAULT_COPY
+
   // Signed-in clients have the same form in their space, with their account
-  // already attached.
-  if (await getSession()) redirect(NEW_TICKET_PATH)
+  // already attached — tagged the same way.
+  if (await getSession()) {
+    redirect(category ? `${NEW_TICKET_PATH}?objet=${TICKET_CATEGORIES[category].param}` : NEW_TICKET_PATH)
+  }
 
   return (
     <>
@@ -43,14 +68,13 @@ export default async function TicketPage() {
         <div className="bg-soft py-10 sm:py-20">
           <div className="mx-auto max-w-content px-6">
             <p className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-primary">
-              Assistance
+              {copy.eyebrow}
             </p>
             <h1 className="mt-4 max-w-3xl font-heading text-4xl font-bold leading-tight text-navy sm:text-[44px]">
-              Soumettre une demande
+              {copy.title}
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slatebody">
-              Un incident, une question ou un projet : décrivez-le, notre équipe s’en charge et vous
-              tient informé à chaque étape.
+              {copy.lead}
             </p>
           </div>
         </div>
@@ -58,7 +82,7 @@ export default async function TicketPage() {
         <div className="mx-auto max-w-content px-6 py-10 sm:py-20">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-16">
             <div className="rounded-[24px] border border-black/5 bg-white p-5 shadow-card sm:rounded-[28px] sm:p-10">
-              <TicketRequestForm />
+              <TicketRequestForm category={category} />
             </div>
 
             <aside className="space-y-8 lg:sticky lg:top-28 lg:self-start">

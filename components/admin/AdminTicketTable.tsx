@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import StatusBadge from '@/components/tickets/StatusBadge'
+import CategoryTag from '@/components/tickets/CategoryTag'
 import type { AdminTicketRow } from '@/lib/admin-tickets'
 import { formatDate, formatDateTime, ticketTitle } from '@/lib/ticket-status'
 
@@ -49,7 +50,8 @@ export default function AdminTicketTable({ tickets }: { tickets: AdminTicketRow[
                 >
                   {ticketTitle(t.message)}
                 </Link>
-                <p className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-slatebody">
+                <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slatebody">
+                  <CategoryTag category={t.category} />
                   <span>
                     {t.replyCount} réponse{t.replyCount > 1 ? 's' : ''}
                   </span>
@@ -74,7 +76,10 @@ export default function AdminTicketTable({ tickets }: { tickets: AdminTicketRow[
           <li key={t.id}>
             <Link href={href(t.ref)} className="block px-5 py-4 transition hover:bg-soft">
               <div className="flex items-center justify-between gap-3">
-                <span className="font-mono text-xs text-primary">{t.ref}</span>
+                <span className="flex items-center gap-2">
+                  <span className="font-mono text-xs text-primary">{t.ref}</span>
+                  <CategoryTag category={t.category} />
+                </span>
                 <StatusBadge status={t.status} />
               </div>
               <p className="mt-2 line-clamp-2 font-heading font-bold text-navy">{ticketTitle(t.message)}</p>

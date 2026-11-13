@@ -71,6 +71,7 @@ export async function listAdminTickets({
         number: true,
         message: true,
         status: true,
+        category: true,
         createdAt: true,
         updatedAt: true,
         user: { select: { name: true, email: true } },

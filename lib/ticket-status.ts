@@ -85,10 +85,57 @@ export function parseTicketRef(ref: string): { year: string; number: number } | 
 // ─── Messages ───────────────────────────────────────────────────────────────
 
 /**
- * Extra field the public /ticket form adds to the Better Auth sign-up request.
- * Better Auth ignores unknown body fields; lib/auth.ts picks this one up.
+ * Extra fields the public /ticket form adds to the Better Auth sign-up request.
+ * Better Auth ignores unknown body fields; lib/auth.ts picks these up.
  */
 export const SIGN_UP_TICKET_FIELD = 'ticketMessage'
+export const SIGN_UP_CATEGORY_FIELD = 'ticketCategory'
+
+// ─── Categories ─────────────────────────────────────────────────────────────
+// A ticket opened from a quote or demo button carries a category (the column
+// reserved for the future fixed-choice select). Ordinary requests have none.
+
+export const TICKET_CATEGORIES = {
+  DEVIS: {
+    param: 'devis',
+    tag: 'Devis',
+    eyebrow: 'Devis gratuit',
+    title: 'Demander un devis',
+    lead: 'Décrivez votre projet : notre équipe l’étudie et vous adresse une proposition chiffrée, sans engagement.',
+    placeholder:
+      'Ex. : Nous souhaitons équiper nos 3 agences d’un réseau sécurisé (pare-feu, Wi-Fi, VPN) pour 40 collaborateurs. Démarrage souhaité en janvier.',
+  },
+  DEMO: {
+    param: 'demo',
+    tag: 'Démo',
+    eyebrow: 'Démonstration',
+    title: 'Demander une démo',
+    lead: 'Dites-nous quelle solution vous intéresse et pour quel usage : nous organisons une démonstration adaptée à votre activité.',
+    placeholder:
+      'Ex. : Nous aimerions voir AltosPOS en démonstration pour notre hôtel de 120 chambres (paiement par bracelet, restaurant et spa).',
+  },
+} as const
+
+export type TicketCategory = keyof typeof TICKET_CATEGORIES
+
+/** From a URL (?objet=devis) or a form field; anything unknown means "no category". */
+export function parseCategory(value: unknown): TicketCategory | null {
+  if (typeof value !== 'string') return null
+  const v = value.trim().toLowerCase()
+  const match = (Object.keys(TICKET_CATEGORIES) as TicketCategory[]).find(
+    (key) => key.toLowerCase() === v || TICKET_CATEGORIES[key].param === v
+  )
+  return match ?? null
+}
+
+/** Category of a stored ticket, for display; null for ordinary requests. */
+export function categoryOf(stored: string | null | undefined): TicketCategory | null {
+  return stored && Object.hasOwn(TICKET_CATEGORIES, stored) ? (stored as TicketCategory) : null
+}
+
+/** Where the quote and demo buttons send visitors. */
+export const QUOTE_HREF = `/ticket?objet=${TICKET_CATEGORIES.DEVIS.param}`
+export const DEMO_HREF = `/ticket?objet=${TICKET_CATEGORIES.DEMO.param}`
 
 export const MESSAGE_MIN_LENGTH = 10
 export const MESSAGE_MAX_LENGTH = 5000

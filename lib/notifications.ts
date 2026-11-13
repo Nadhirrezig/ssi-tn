@@ -15,7 +15,7 @@ import type { TicketStatus } from '@/lib/ticket-status'
  */
 
 type Person = { name: string; email: string }
-type TicketRef = { ref: string; message: string }
+type TicketRef = { ref: string; message: string; category?: string | null }
 
 // ─── To the team ────────────────────────────────────────────────────────────
 

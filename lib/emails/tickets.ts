@@ -3,10 +3,16 @@ import 'server-only'
 import type { MailMessage } from '@/lib/mail'
 import { renderEmail } from '@/lib/emails/layout'
 import { SITE_URL } from '@/lib/site'
-import { STATUS_META, ticketTitle, type TicketStatus } from '@/lib/ticket-status'
+import { categoryOf, STATUS_META, TICKET_CATEGORIES, ticketTitle, type TicketStatus } from '@/lib/ticket-status'
 
 type Client = { name: string; email: string }
-type TicketRef = { ref: string; message: string }
+type TicketRef = { ref: string; message: string; category?: string | null }
+
+/** "demande", or "demande de devis" / "demande de démo" for tagged tickets. */
+function kindOf(ticket: TicketRef): string {
+  const category = categoryOf(ticket.category)
+  return category ? `demande de ${TICKET_CATEGORIES[category].tag.toLowerCase()}` : 'demande'
+}
 
 /** Long messages are cut in emails; the full text is one click away. */
 function excerpt(text: string, max = 1200): string {
@@ -75,10 +81,10 @@ export function statusChangeClientMessage(
 export function newTicketAdminMessage(to: string, ticket: TicketRef, client: Client): MailMessage {
   return {
     to,
-    subject: `[${ticket.ref}] Nouvelle demande — ${ticketTitle(ticket.message, 60)}`,
+    subject: `[${ticket.ref}] Nouvelle ${kindOf(ticket)} — ${ticketTitle(ticket.message, 60)}`,
     ...renderEmail({
-      preheader: `${client.name} a ouvert une demande.`,
-      heading: `Nouvelle demande ${ticket.ref}`,
+      preheader: `${client.name} a ouvert une ${kindOf(ticket)}.`,
+      heading: `Nouvelle ${kindOf(ticket)} ${ticket.ref}`,
       paragraphs: [`De : ${client.name} <${client.email}>`, excerpt(ticket.message)],
       action: { label: 'Ouvrir la demande', url: adminUrl(ticket.ref) },
     }),

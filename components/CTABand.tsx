@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Reveal from './motion/Reveal'
+import { QUOTE_HREF } from '@/lib/ticket-status'
 
 export default function CTABand() {
   return (
@@ -21,14 +22,14 @@ export default function CTABand() {
                 sur mesure, adaptée à vos enjeux et à votre budget.
               </p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-                <a
-                  href="mailto:contact@ssi-tn.com?subject=Demande%20de%20devis"
+                <Link
+                  href={QUOTE_HREF}
                   className="rounded-full bg-white px-9 py-4 font-heading text-base font-bold text-primary transition hover:bg-accentYellow hover:text-navy"
                 >
                   Demander un devis gratuit
-                </a>
+                </Link>
                 <Link
-                  href="#contact"
+                  href="/#services"
                   className="rounded-full border border-white/40 px-9 py-4 font-heading text-base font-bold text-white transition hover:bg-white/10"
                 >
                   Voir nos services

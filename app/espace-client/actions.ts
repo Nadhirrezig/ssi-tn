@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import { requireUser } from '@/lib/session'
 import { addClientReply, createTicket, TicketError } from '@/lib/tickets'
 import { notifyAdminClientReply, notifyAdminNewTicket } from '@/lib/notifications'
-import { normalizeMessage, validateMessage } from '@/lib/ticket-status'
+import { normalizeMessage, parseCategory, validateMessage } from '@/lib/ticket-status'
 
 export type FormState = { error?: string; sentAt?: number } | undefined
 
@@ -22,7 +22,8 @@ export async function createTicketAction(_prev: FormState, formData: FormData): 
 
   let ref: string
   try {
-    const ticket = await createTicket(user.id, message)
+    // Set by the quote / demo entry points; unknown values mean no category.
+    const ticket = await createTicket(user.id, message, parseCategory(formData.get('category')))
     ref = ticket.ref
     after(() => notifyAdminNewTicket(ticket, user))
   } catch (error) {

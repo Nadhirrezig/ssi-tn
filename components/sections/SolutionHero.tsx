@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import type { SolutionHeroContent } from '@/lib/content/solutions'
+import { DEMO_HREF } from '@/lib/ticket-status'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -77,7 +78,7 @@ export default function SolutionHero({ content }: { content: SolutionHeroContent
               into two ragged rows of different widths. */}
           <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
             <Link
-              href="/#contact"
+              href={DEMO_HREF}
               className="rounded-full bg-primary px-8 py-4 text-center font-heading text-base font-bold text-white shadow-float transition hover:bg-primary-700"
             >
               Demander une démo

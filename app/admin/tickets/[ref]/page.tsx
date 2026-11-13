@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import PageBand from '@/components/tickets/PageBand'
 import StatusBadge from '@/components/tickets/StatusBadge'
+import CategoryTag from '@/components/tickets/CategoryTag'
 import StatusStepper from '@/components/tickets/StatusStepper'
 import TicketThread from '@/components/tickets/TicketThread'
 import TicketDetails from '@/components/tickets/TicketDetails'
@@ -49,6 +50,7 @@ export default async function AdminTicketPage({ params }: Props) {
         lead={
           <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span className="font-mono text-sm text-primary">{ticket.ref}</span>
+            <CategoryTag category={ticket.category} />
             <StatusBadge status={ticket.status} />
             <span className="text-sm">
               {ticket.user.name} · {formatDateTime(ticket.submittedAt ?? ticket.createdAt)}

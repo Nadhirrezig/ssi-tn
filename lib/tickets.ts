@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { db } from '@/lib/db'
-import { formatTicketRef, isFinalStatus, parseTicketRef } from '@/lib/ticket-status'
+import { formatTicketRef, isFinalStatus, parseTicketRef, type TicketCategory } from '@/lib/ticket-status'
 
 /**
  * Ticket data access. Every function that reads or writes on behalf of a
@@ -26,6 +26,7 @@ export async function listClientTickets(userId: string) {
       number: true,
       message: true,
       status: true,
+      category: true,
       createdAt: true,
       updatedAt: true,
       _count: { select: { messages: true } },
@@ -85,7 +86,7 @@ export type ClientTicket = NonNullable<Awaited<ReturnType<typeof getClientTicket
 export class TicketError extends Error {}
 
 /** A signed-in client opens a ticket: submitted immediately. */
-export async function createTicket(userId: string, message: string) {
+export async function createTicket(userId: string, message: string, category: TicketCategory | null = null) {
   const recent = await db.ticket.count({
     where: { userId, createdAt: { gte: new Date(Date.now() - HOUR) } },
   })
@@ -95,7 +96,7 @@ export async function createTicket(userId: string, message: string) {
 
   return db.$transaction(async (tx) => {
     const ticket = await tx.ticket.create({
-      data: { userId, message, submittedAt: new Date() },
+      data: { userId, message, category, submittedAt: new Date() },
     })
     await tx.ticketEvent.create({
       data: { ticketId: ticket.id, fromStatus: null, toStatus: 'PENDING', actorId: userId },
@@ -108,8 +109,8 @@ export async function createTicket(userId: string, message: string) {
  * A visitor wrote a ticket and signed up in the same step. The ticket waits,
  * unsubmitted and invisible to the team, until the address is confirmed.
  */
-export async function createDraftTicket(userId: string, message: string) {
-  return db.ticket.create({ data: { userId, message, submittedAt: null } })
+export async function createDraftTicket(userId: string, message: string, category: TicketCategory | null = null) {
+  return db.ticket.create({ data: { userId, message, category, submittedAt: null } })
 }
 
 /** Called once the email is verified: drafts become real, PENDING tickets. */

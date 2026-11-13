@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Logo from './Logo'
 import { NavPanelId, OPEN_PANEL_EVENT } from '@/lib/nav'
+import { QUOTE_HREF } from '@/lib/ticket-status'
+import { scrollToTopIfHome } from '@/lib/scroll'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -62,14 +65,13 @@ type NavItem = { id: string; label: string } & (
 )
 
 const NAV: NavItem[] = [
-  { id: 'accueil', label: 'Accueil', href: '/#home' },
+  { id: 'accueil', label: 'Accueil', href: '/' },
   {
     id: 'solutions',
     label: 'Solutions',
-    href: '/#contact',
     panel: {
       note: 'Un seul partenaire de confiance pour toute votre informatique.',
-      cta: { label: 'Demander un devis', href: '/#contact' },
+      cta: { label: 'Demander un devis', href: QUOTE_HREF },
       carousel: true,
       cards: [
         {
@@ -99,54 +101,21 @@ const NAV: NavItem[] = [
           eyebrow: 'Écosystème',
           title: 'Développement sur mesure',
           desc: 'Applications métier, intégrations et évolutions conçues autour de vos processus et de votre système d’information.',
-          href: '/#contact',
+          href: QUOTE_HREF,
           image: '/website-content/about-02.webp',
           imageAlt: 'Équipe SSI en atelier de développement sur mesure',
           links: [
-            { label: 'Applications métier', href: '/#contact' },
-            { label: 'Intégrations & API', href: '/#contact' },
-            { label: 'Maintenance & évolutions', href: '/#contact' },
+            { label: 'Applications métier', href: QUOTE_HREF },
+            { label: 'Intégrations & API', href: QUOTE_HREF },
+            { label: 'Maintenance & évolutions', href: QUOTE_HREF },
           ],
         },
       ],
     },
   },
-  // À propos is a plain link (no mega panel) — it navigates to the about page.
   { id: 'about', label: 'À propos', href: '/#about' },
-  {
-    id: 'realisations',
-    label: 'Réalisations',
-    panel: {
-      note: 'Des projets concrets, des résultats mesurables.',
-      cta: { label: 'Voir toutes nos réalisations', href: '/#realisations' },
-      cards: [
-        {
-          eyebrow: 'Étude de cas',
-          title: 'Refonte d’infrastructure',
-          desc: 'Réseau et serveurs redondés à haute disponibilité pour un groupe industriel.',
-          href: '/#realisations',
-          image: '/website-content/about-02.webp',
-          imageAlt: 'Projet d’infrastructure réseau livré par SSI',
-          links: [
-            { label: 'Infrastructure & Réseaux', href: '/#realisations' },
-            { label: 'Cloud & Infogérance', href: '/#realisations' },
-          ],
-        },
-        {
-          eyebrow: 'Étude de cas',
-          title: 'Sécurité & conformité',
-          desc: 'Audit complet, SOC managé et plan de remédiation pour des acteurs sensibles.',
-          href: '/#realisations',
-          image: '/website-content/about-03.webp',
-          imageAlt: 'Supervision et sécurité des systèmes par SSI',
-          links: [
-            { label: 'Cybersécurité', href: '/#realisations' },
-            { label: 'Supervision 24/7', href: '/#realisations' },
-          ],
-        },
-      ],
-    },
-  },
+  // « Réalisations » returns once real case studies are published: until then
+  // its panel could only lead to a section that no longer exists.
 ]
 
 function Chevron({ open }: { open: boolean }) {
@@ -397,6 +366,7 @@ export default function Header({
   const [active, setActive] = useState<string | null>(null)
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   const reduce = useReducedMotion()
+  const pathname = usePathname()
 
   useEffect(() => {
     // Passive: the handler never calls preventDefault, and a non-passive scroll
@@ -476,7 +446,10 @@ export default function Header({
                   key={item.id}
                   href={item.href}
                   onMouseEnter={() => setActive(null)}
-                  onClick={closeAll}
+                  onClick={(e) => {
+                    scrollToTopIfHome(e, pathname, item.href)
+                    closeAll()
+                  }}
                   className="font-heading text-[15px] font-semibold text-navy transition hover:text-primary"
                 >
                   {item.label}
@@ -489,8 +462,8 @@ export default function Header({
           <div className="flex items-center gap-4">
             <a
               href="tel:+21628290350"
-              className={`hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary ${
-                chrome ? 'xl:flex' : ''
+              className={`hidden items-center gap-2 font-heading text-[15px] font-bold text-navy transition hover:text-primary xl:flex ${
+                chrome ? '' : 'xl:invisible'
               }`}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -510,7 +483,7 @@ export default function Header({
               Espace client
             </Link>
             <Link
-              href="/#contact"
+              href={QUOTE_HREF}
               onClick={closeAll}
               className={`hidden rounded-full px-6 py-2.5 font-heading text-[15px] font-bold shadow-float transition sm:inline-block ${
                 solid
@@ -637,7 +610,10 @@ export default function Header({
                     <Link
                       key={item.id}
                       href={item.href}
-                      onClick={closeAll}
+                      onClick={(e) => {
+                        scrollToTopIfHome(e, pathname, item.href)
+                        closeAll()
+                      }}
                       className="block border-b border-black/5 py-3.5 font-heading font-semibold text-navy"
                     >
                       {item.label}
@@ -652,7 +628,7 @@ export default function Header({
                   Espace client
                 </Link>
                 <Link
-                  href="/#contact"
+                  href={QUOTE_HREF}
                   onClick={closeAll}
                   className="mt-4 block rounded-full bg-primary py-3 text-center font-heading font-bold text-white"
                 >
