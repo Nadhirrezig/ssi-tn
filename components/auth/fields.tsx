@@ -3,32 +3,48 @@ import type { InputHTMLAttributes, ReactNode } from 'react'
 /** Shared link style for the small print around the forms. */
 export const AUTH_LINK = 'font-semibold text-primary underline-offset-2 hover:underline'
 
-/** Label above, input, optional helper text below. */
+/** Label above, input, optional helper text below — or the field's error in its place. */
 export function Field({
   label,
+  optional = false,
   hint,
+  error,
   id,
   ...input
-}: { label: string; hint?: string; id: string } & InputHTMLAttributes<HTMLInputElement>) {
+}: {
+  label: string
+  /** Adds "(facultatif)" after the label. */
+  optional?: boolean
+  hint?: string
+  error?: string
+  id: string
+} & InputHTMLAttributes<HTMLInputElement>) {
+  const note = error ?? hint
   return (
     <div>
       <label htmlFor={id} className="block font-heading text-sm font-bold text-navy">
         {label}
+        {optional ? <span className="ml-1 font-body text-xs font-normal text-slatebody">(facultatif)</span> : null}
       </label>
       <input
         id={id}
-        className="mt-2 block w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-base text-navy transition placeholder:text-slatebody/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
-        aria-describedby={hint ? `${id}-hint` : undefined}
+        className={`${FIELD_INPUT} ${error ? 'border-accentCoral' : 'border-black/10'}`}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={note ? `${id}-note` : undefined}
         {...input}
       />
-      {hint ? (
-        <p id={`${id}-hint`} className="mt-1.5 text-xs text-slatebody">
-          {hint}
+      {note ? (
+        <p id={`${id}-note`} className={`mt-1.5 text-xs ${error ? 'font-semibold text-[#B4234A]' : 'text-slatebody'}`}>
+          {note}
         </p>
       ) : null}
     </div>
   )
 }
+
+/** Input look shared by Field and custom inputs (password with buttons). Border colour is added by the caller. */
+export const FIELD_INPUT =
+  'mt-2 block w-full rounded-xl border bg-white px-4 py-3 text-base text-navy transition placeholder:text-slatebody/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60'
 
 export function SubmitButton({ pending, children }: { pending: boolean; children: ReactNode }) {
   return (

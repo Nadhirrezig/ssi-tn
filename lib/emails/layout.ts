@@ -35,6 +35,7 @@ const LINE = '#E4E8F2'
 const PAGE = '#F4F6FB'
 const FONT = "'Open Sans', 'Segoe UI', Arial, Helvetica, sans-serif"
 const HEADING_FONT = "'Quicksand', 'Segoe UI', Arial, Helvetica, sans-serif"
+const MONO_FONT = "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace"
 
 const PHONE_DISPLAY = '+216 28 290 350'
 const PHONE_HREF = 'tel:+21628290350'
@@ -61,7 +62,13 @@ export type PillTone = keyof typeof PILLS
 
 /** One line of the details card: an icon, a label and its value — or a status pill. */
 export type DetailRow =
-  | { icon: 'ticket' | 'calendar' | 'user'; label: string; value: string }
+  | {
+      icon: 'ticket' | 'calendar' | 'user' | 'lock'
+      label: string
+      value: string
+      /** Monospace, for values typed back character by character (a password). */
+      mono?: boolean
+    }
   | { pill: PillTone; label: string; value: string }
 
 export type EmailContent = {
@@ -123,7 +130,7 @@ function detailsCard(rows: DetailRow[]) {
       const value =
         'pill' in row
           ? `<span style="display:inline-block;margin-top:4px;padding:5px 14px;border-radius:999px;background:${PILLS[row.pill].background};color:${PILLS[row.pill].color};font-family:${HEADING_FONT};font-size:15px;font-weight:700;line-height:1.3;">${escapeHtml(row.value)}</span>`
-          : `<p style="margin:2px 0 0;font-family:${HEADING_FONT};font-size:18px;font-weight:700;line-height:1.35;color:${NAVY};word-break:break-word;">${escapeHtml(row.value)}</p>`
+          : `<p style="margin:2px 0 0;font-family:${row.mono ? MONO_FONT : HEADING_FONT};font-size:18px;font-weight:700;line-height:1.35;color:${NAVY};word-break:${row.mono ? 'break-all' : 'break-word'};">${escapeHtml(row.value)}</p>`
       return `<tr>
         <td width="44" valign="middle" style="width:44px;padding:${i ? 18 : 0}px 0 0;">${lead}</td>
         <td valign="middle" style="padding:${i ? 18 : 0}px 0 0 14px;">

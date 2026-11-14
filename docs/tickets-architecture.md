@@ -91,7 +91,7 @@ Rules:
 
 | Model | Fields |
 |---|---|
-| `User` *(Better Auth)* | Better Auth fields + `role: CLIENT \| ADMIN` (default `CLIENT`) |
+| `User` *(Better Auth)* | Better Auth fields + `role: CLIENT \| ADMIN` (default `CLIENT`) + optional `company`, `phone` (entered by the team) |
 | `Session`, `Account`, `Verification`, `RateLimit` | Better Auth's own tables |
 | `Ticket` | `id`, `number` (autoincrement, unique), `userId`, `message`, `status`, `category?` (`DEVIS`, `DEMO`, or null — see below), `submittedAt?`, `createdAt`, `updatedAt` |
 | `TicketMessage` | `id`, `ticketId`, `authorId`, `body`, `createdAt` |
@@ -149,6 +149,17 @@ Agent-side patterns (Zendesk, Freshdesk, Gorgias), same theme and components as 
 - Admins who open `/espace-client` (header link, post-login default) are sent to `/admin/tickets`.
 - Files: `components/admin/*`, `app/admin/*`, `lib/admin-tickets.ts`.
 
+### Clients (admin)
+
+- **`/admin/clients`**: every client account — name, email, company, phone, number of requests (and how many are open), account status (*Actif*, or *E-mail non confirmé* for a self sign-up that never clicked its link), creation date. Search by name, email, company or phone. A row opens the inbox filtered on that client.
+- **`/admin/clients/nouveau`**: the team creates an account (name, email, optional company and phone, a password typed or generated). The account is verified and usable at once; the client receives *Votre espace client SSI est prêt* with their login and that password. If the email fails, the admin is told on the list page so they can pass the details on themselves.
+- The inbox search also matches the company, and the ticket page's client card shows company and a tap-to-call phone.
+- Files: `app/admin/clients/*`, `components/admin/{ClientsTable,NewClientForm,SearchBox,Pagination}.tsx`, `lib/admin-clients.ts`.
+
+### Application shell
+
+`/espace-client` and `/admin` are applications, not pages of the site: no marketing header or footer. `components/app/AppShell.tsx` draws a slim sticky bar — logo, the area's name, its sections (*Mes demandes*, *Nouvelle demande* / *Demandes*, *Clients*), *Retour au site*, and an account menu (name, email, *Retour au site*, *Se déconnecter*) — and one line of small print. Below `md` the sections move to a second row. Login and sign-up pages keep the site header.
+
 ## 7. Server Actions
 
 | Action | Who | Effect |
@@ -158,6 +169,7 @@ Agent-side patterns (Zendesk, Freshdesk, Gorgias), same theme and components as 
 | `replyToTicketAction` | Client (owner) | Adds `TicketMessage` → email admin |
 | `adminReplyAction` | Admin | Adds `TicketMessage`, optionally moves the status → one email to the client |
 | `adminStatusAction` | Admin | Moves the status, writes `TicketEvent` → email client |
+| `createClientAction` | Admin | Creates a verified `CLIENT` with a password → emails the login and password |
 
 Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket and per-hour limits are enforced in `lib/tickets.ts` (10 new tickets, 40 replies per user per hour). Admin actions live in `app/admin/actions.ts`; `lib/admin-tickets.ts` validates transitions and moves the status only if it is still what the admin saw (`updateMany … where status = from`), so two admins acting at once cannot both win.
 
@@ -170,6 +182,7 @@ Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket 
 | Ticket submitted / client replied | Admin (`ADMIN_NOTIFY_EMAIL`) | Server Action |
 | Admin replied | Client | Server Action |
 | Status changed | Client | Server Action |
+| Account created by the team (login + password) | Client | `createClientAction` |
 
 - Sent from `lib/mail.ts` (one Nodemailer transport) with French HTML templates in `lib/emails/`.
 - One layout for every email (`lib/emails/layout.ts`): SSI logo and tagline, round icon, headline, greeting, a details card (ticket number, date, status pill), one button, sign-off, navy contact band. The logo and Lucide icons are PNGs sent as inline attachments (`cid:`), so they show even where remote images are blocked; `lib/emails/images.ts` attaches only the ones a message uses.
@@ -181,6 +194,7 @@ Client actions live in `app/espace-client/actions.ts`; ownership, closed-ticket 
 ## 9. Security
 
 - No public admin sign-up: team accounts are created by `pnpm admin:create` (see below). Non-admins get a 404 on `/admin`.
+- Accounts created from the admin area are always `CLIENT`. Their password is the one the team chose, sent in the welcome email as decided by SSI; it stays readable in that inbox, so clients are told they can replace it with *Mot de passe oublié*.
 - Clients never see which agent answered: team messages read "Équipe SSI".
 - Clients can only read and reply to their own tickets, enforced in every query.
 - Message length capped (5,000 characters).
@@ -252,5 +266,6 @@ Any non-Neon `DATABASE_URL` (e.g. `postgresql://postgres:postgres@localhost:5432
 | 1 | Foundation: Prisma + Neon schema, Better Auth, `lib/mail.ts`, auth pages, `/espace-client` placeholder | Sign-up / login / verification / reset working |
 | 2 | Client side: `/ticket`, sign-up with draft, dashboard, thread, `proxy.ts`, team notification emails, header link | Clients submit and track tickets |
 | 3 | Admin side: inbox + search, reply with status, status buttons, client emails, `admin:create`, local-Postgres support | Full loop ✅ |
+| 5 | Clients page and account creation from the admin, application shell for both areas | Team onboards clients itself ✅ |
 
 Phase 4 ("email wiring, admin seed") was folded into phases 2–3. Possible next steps: internal team notes, assignment to an agent, attachments, the fixed-choice category select.

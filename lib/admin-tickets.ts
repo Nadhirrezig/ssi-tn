@@ -40,6 +40,7 @@ function searchFilter(q: string | undefined): Prisma.TicketWhereInput {
       OR: [
         { name: { contains: query, mode: 'insensitive' } },
         { email: { contains: query, mode: 'insensitive' } },
+        { company: { contains: query, mode: 'insensitive' } },
       ],
     },
   }
@@ -122,6 +123,8 @@ export async function getAdminTicket(ref: string) {
           id: true,
           name: true,
           email: true,
+          company: true,
+          phone: true,
           createdAt: true,
           _count: { select: { tickets: { where: { submittedAt: { not: null } } } } },
         },

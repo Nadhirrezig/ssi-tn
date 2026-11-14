@@ -72,3 +72,31 @@ export function accountExistsMessage(user: Recipient): MailMessage {
     }),
   }
 }
+
+/**
+ * Sent when the team creates a client account from the admin area: the
+ * account is ready to use, with the login and the password the team chose.
+ */
+export function accountCreatedMessage(user: Recipient, password: string): MailMessage {
+  return {
+    to: user.email,
+    subject: 'Votre espace client SSI est prêt',
+    ...renderEmail({
+      preheader: 'Vos identifiants pour suivre vos demandes avec l’équipe SSI.',
+      tone: 'success',
+      heading: 'Votre espace client est prêt',
+      greeting: `Bonjour ${firstName(user.name)},`,
+      paragraphs: [
+        'L’équipe SSI vient de créer votre espace client. Vous pourrez y ouvrir vos demandes, suivre leur avancement et échanger directement avec nos techniciens.',
+        'Voici vos identifiants de connexion :',
+      ],
+      details: [
+        { icon: 'user', label: 'Identifiant', value: user.email },
+        { icon: 'lock', label: 'Mot de passe', value: password, mono: true },
+      ],
+      action: { label: 'Me connecter', url: `${SITE_URL}/connexion` },
+      footnote:
+        'Conservez ce message en lieu sûr. Vous pouvez choisir un autre mot de passe à tout moment avec « Mot de passe oublié » sur la page de connexion.',
+    }),
+  }
+}
