@@ -40,7 +40,7 @@ export default async function NouvelleDemandePage({
             <NewTicketForm category={category} />
           </div>
 
-          <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+          <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
             <section aria-labelledby="tips" className="rounded-[24px] border border-black/5 bg-white p-5 sm:p-6">
               <h2 id="tips" className="font-heading text-xs font-bold uppercase tracking-[0.12em] text-slatebody">
                 Pour un traitement rapide

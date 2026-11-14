@@ -115,7 +115,7 @@ export default async function DemandePage({ params, searchParams }: Props) {
             </div>
           </section>
 
-          <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+          <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
             <TicketDetails ticket={ticket} />
             <HelpCard />
           </aside>

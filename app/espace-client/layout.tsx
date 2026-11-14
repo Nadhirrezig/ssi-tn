@@ -1,9 +1,8 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import PortalNav from '@/components/tickets/PortalNav'
+import AppShell from '@/components/app/AppShell'
+import type { AppTab } from '@/components/app/AppBar'
 import { NEW_TICKET_PATH } from '@/lib/auth-ui'
 import { requireUser } from '@/lib/session'
 
@@ -12,14 +11,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const TABS = [
-  { href: '/espace-client', label: 'Mes demandes' },
-  { href: NEW_TICKET_PATH, label: 'Nouvelle demande', short: 'Nouvelle' },
+const TABS: AppTab[] = [
+  { href: '/espace-client', label: 'Mes demandes', icon: 'list' },
+  { href: NEW_TICKET_PATH, label: 'Nouvelle demande', icon: 'plus' },
 ]
 
 /**
- * Frame of the client area. The session check here only feeds the nav bar:
- * layouts do not re-run on every navigation, so each page checks again.
+ * Frame of the client area — an application, not a page of the site. The
+ * session check here only feeds the bar: layouts do not re-run on every
+ * navigation, so each page checks again.
  */
 export default async function EspaceClientLayout({ children }: { children: ReactNode }) {
   const { user } = await requireUser()
@@ -29,13 +29,8 @@ export default async function EspaceClientLayout({ children }: { children: React
   if (user.role === 'ADMIN') redirect('/admin/tickets')
 
   return (
-    <>
-      <Header solid />
-      <main className="min-h-[70vh] pt-20">
-        <PortalNav tabs={TABS} label="Espace client" name={user.name} detail={user.email} />
-        {children}
-      </main>
-      <Footer />
-    </>
+    <AppShell area="Espace client" tabs={TABS} user={{ name: user.name, detail: user.email }}>
+      {children}
+    </AppShell>
   )
 }

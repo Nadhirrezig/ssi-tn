@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import PortalNav from '@/components/tickets/PortalNav'
+import AppShell from '@/components/app/AppShell'
+import type { AppTab } from '@/components/app/AppBar'
 import { requireAdmin } from '@/lib/session'
 
 export const metadata: Metadata = {
@@ -10,7 +9,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const TABS = [{ href: '/admin/tickets', label: 'Demandes clients' }]
+const TABS: AppTab[] = [
+  { href: '/admin/tickets', label: 'Demandes', icon: 'inbox' },
+  { href: '/admin/clients', label: 'Clients', icon: 'users' },
+]
 
 /**
  * Frame of the admin area. Non-admins get a 404 here and on every page —
@@ -20,13 +22,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const { user } = await requireAdmin()
 
   return (
-    <>
-      <Header solid />
-      <main className="min-h-[70vh] pt-20">
-        <PortalNav tabs={TABS} label="Administration" name={user.name} detail="Équipe SSI" />
-        {children}
-      </main>
-      <Footer />
-    </>
+    <AppShell area="Administration" tabs={TABS} user={{ name: user.name, detail: `Équipe SSI · ${user.email}` }}>
+      {children}
+    </AppShell>
   )
 }

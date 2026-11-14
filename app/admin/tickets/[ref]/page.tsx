@@ -100,7 +100,7 @@ export default async function AdminTicketPage({ params }: Props) {
             </div>
           </section>
 
-          <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+          <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
             <ClientCard client={ticket.user} />
             {!final ? (
               <StatusActions
